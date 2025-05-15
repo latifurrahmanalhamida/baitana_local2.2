@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
 export function middleware(request) {
-    const token = request.cookies.get('access_token')?.value;
+    const token = cookies().get('access_token')?.value;
+    const isDashboardRoute = request.nextUrl.pathname.startsWith('/dashboard');
+    const isMastersRoute = request.nextUrl.pathname.startsWith('/masters');
 
-    const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard');
-
-    if (isProtectedRoute && !token) {
+    // Perbaiki kondisi logika di sini
+    if ((isDashboardRoute || isMastersRoute) && !token) {
         return NextResponse.redirect(new URL('/auth/login', request.url));
     }
 
@@ -14,5 +15,8 @@ export function middleware(request) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*'],
+    matcher: [
+        '/dashboard/:path*',
+        '/masters/:path*',
+    ],
 };
