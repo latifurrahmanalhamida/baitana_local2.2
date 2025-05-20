@@ -64,22 +64,22 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Infaq Income",
-          url: "#",
+          title: "Infaq Masuk",
+          url: "/role/InfaqIncome",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Infaq Keluar",
+          url: "/role/InfaqOut",
         },
       ],
     },
     {
-      title: "Reservation",
+      title: "Reservasi",
       url: "/role/reservation",
       icon: Bot,
     },
     {
-      title: "Event",
+      title: "Acara",
       url: "#",
       icon: BookOpen,
       items: [
@@ -102,7 +102,7 @@ const data = {
       ],
     },
     {
-      title: "Event Schedules",
+      title: "Jadwal Acara",
       url: "#",
       icon: BookOpen,
       items: [
@@ -125,7 +125,7 @@ const data = {
       ],
     },
     {
-      title: "Facility",
+      title: "Fasilitas",
       url: "#",
       icon: BookOpen,
       items: [
