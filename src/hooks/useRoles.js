@@ -1,14 +1,10 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { getRoles, createRole, updateRole, deleteRole } from "@/lib/role";
 
-const RoleContext = createContext();
-
-export function RoleProvider({ children }) {
-    const router = useRouter();
+export default function useRoles() {
     const [roles, setRoles] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,12 +12,12 @@ export function RoleProvider({ children }) {
     const [selectedRole, setSelectedRole] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Fetch data
     const fetchRoles = async () => {
         setIsLoading(true);
         try {
-            const data = await getRoles(searchQuery);
-            setRoles(data);
+            const roles = await getRoles(searchQuery);
+            console.log(roles);
+            setRoles(roles);
         } catch (error) {
             toast.error("Gagal memuat data role");
             console.error(error);
@@ -30,7 +26,6 @@ export function RoleProvider({ children }) {
         }
     };
 
-    // Add role
     const handleAddRole = async (values) => {
         setIsLoading(true);
         try {
@@ -46,7 +41,6 @@ export function RoleProvider({ children }) {
         }
     };
 
-    // Edit role
     const handleEditRole = async (values) => {
         setIsLoading(true);
         try {
@@ -62,13 +56,11 @@ export function RoleProvider({ children }) {
         }
     };
 
-    // Delete role
     const handleDeleteRole = async () => {
         setIsLoading(true);
         try {
             const res = await deleteRole(selectedRole.id);
             toast.success(res.message);
-            // toast.success("Role berhasil dihapus");
             setIsDeleteAlertOpen(false);
             fetchRoles();
         } catch (error) {
@@ -79,30 +71,26 @@ export function RoleProvider({ children }) {
         }
     };
 
-    // Open modal for add
     const openAddModal = () => {
         setSelectedRole(null);
         setIsModalOpen(true);
     };
 
-    // Open modal for edit
     const openEditModal = (role) => {
         setSelectedRole(role);
         setIsModalOpen(true);
     };
 
-    // Open delete confirmation
     const openDeleteAlert = (role) => {
         setSelectedRole(role);
         setIsDeleteAlertOpen(true);
     };
 
-    // Handle search
     const handleSearch = (query) => {
         setSearchQuery(query);
     };
 
-    const value = {
+    return {
         roles,
         isLoading,
         isModalOpen,
@@ -120,14 +108,4 @@ export function RoleProvider({ children }) {
         openDeleteAlert,
         handleSearch
     };
-
-    return <RoleContext.Provider value={value}>{children}</RoleContext.Provider>;
 }
-
-export const useRole = () => {
-    const context = useContext(RoleContext);
-    if (context === undefined) {
-        throw new Error("useRole must be used within a RoleProvider");
-    }
-    return context;
-};

@@ -1,26 +1,22 @@
-// src/components/role/role-form.jsx
 "use client";
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { roleSchema } from "@/schemas/role-schema";
-import { useRole } from "@/context/RoleContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { InputError } from "@/components/InputError";
 import { ModalForm } from "@/components/ModalForm";
 
-export function RoleForm() {
-    const {
-        isModalOpen,
-        setIsModalOpen,
-        selectedRole,
-        handleAddRole,
-        handleEditRole,
-        isLoading
-    } = useRole();
-
+export function RoleForm({
+   isModalOpen,
+   setIsModalOpen,
+   selectedRole,
+   handleAddRole,
+   handleEditRole,
+   isLoading,
+}) {
     const isEditMode = !!selectedRole;
 
     const form = useForm({
@@ -58,6 +54,7 @@ export function RoleForm() {
             onSubmit={onSubmit}
             isLoading={isLoading}
             submitLabel={isEditMode ? "Update" : "Simpan"}
+            size="sm"
         >
             <div className="space-y-2">
                 <Label htmlFor="name">Nama Role</Label>
