@@ -83,7 +83,7 @@ export default function Navbar({ className }) {
             </li>
             <li className="w-full flex justify-center md:w-auto md:block">
               <Link
-                href="/login"
+                href="/auth/login"
                 className="bg-white text-green-900 text-sm hover:bg-green-100 py-1.5 px-5 rounded-md flex items-center justify-center gap-2 transition duration-300"
               >
                 Login
