@@ -63,6 +63,10 @@ const data = {
       icon: SquareTerminal,
       isActive: true,
       items: [
+         {
+          title: "Jenis Infaq",
+          url: "/role/InfaqTypes",
+        },
         {
           title: "Infaq Masuk",
           url: "/role/InfaqIncome",
