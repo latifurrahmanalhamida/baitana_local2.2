@@ -24,7 +24,7 @@ const loginSchema = z.object({
 });
 
 export function LoginForm({ className, ...props }) {
-  const { login, authLoading, error } = useAuth();
+  // const { login, authLoading, error } = useAuth();
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const router = useRouter();
 
@@ -60,30 +60,30 @@ export function LoginForm({ className, ...props }) {
                   </p>
                 </div>
 
-                {error && (
-                    <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className={"text-center text-red-500"}>Gagal Login!</AlertDialogTitle>
-                          <AlertDialogDescription className={"text-center"}>
-                            {error}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogAction className={"mx-auto "} onClick={() => setErrorDialogOpen(false)}>
-                            OK
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                )}
+                {/*{error && (*/}
+                {/*    <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>*/}
+                {/*      <AlertDialogContent>*/}
+                {/*        <AlertDialogHeader>*/}
+                {/*          <AlertDialogTitle className={"text-center text-red-500"}>Gagal Login!</AlertDialogTitle>*/}
+                {/*          <AlertDialogDescription className={"text-center"}>*/}
+                {/*            {error}*/}
+                {/*          </AlertDialogDescription>*/}
+                {/*        </AlertDialogHeader>*/}
+                {/*        <AlertDialogFooter>*/}
+                {/*          <AlertDialogAction className={"mx-auto "} onClick={() => setErrorDialogOpen(false)}>*/}
+                {/*            OK*/}
+                {/*          </AlertDialogAction>*/}
+                {/*        </AlertDialogFooter>*/}
+                {/*      </AlertDialogContent>*/}
+                {/*    </AlertDialog>*/}
+                {/*)}*/}
 
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" placeholder="email@example.com" {...register("email")} />
-                  {errors.email && (
-                      <p className="text-xs text-red-500">{errors.email.message}</p>
-                  )}
+                  {/*{errors.email && (*/}
+                  {/*    <p className="text-xs text-red-500">{errors.email.message}</p>*/}
+                  {/*)}*/}
                 </div>
 
                 <div className="grid gap-3">
@@ -94,13 +94,14 @@ export function LoginForm({ className, ...props }) {
                     </a>
                   </div>
                   <Input id="password" type="password" placeholder={"password"} {...register("password")} />
-                  {errors.password && (
-                      <p className="text-xs text-red-500">{errors.password.message}</p>
-                  )}
+                  {/*{errors.password && (*/}
+                  {/*    <p className="text-xs text-red-500">{errors.password.message}</p>*/}
+                  {/*)}*/}
                 </div>
 
-                <Button type="submit" className="w-full" disabled={authLoading}>
-                  {authLoading ? "Loading..." : "Login"}
+                {/*<Button type="submit" className="w-full" disabled={authLoading}>*/}
+                <Button type="submit" className="w-full">
+                  {/*{authLoading ? "Loading..." : "Login"}*/} Login
                 </Button>
 
                 <div className="text-center text-sm">

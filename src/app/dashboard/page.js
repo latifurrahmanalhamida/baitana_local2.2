@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/sidebar"
 
 import data from "./data.json"
-import AuthGuard from "@/components/AuthGuard";
+// import AuthGuard from "@/components/AuthGuard";
 
 export default function Page() {
   return (
-      <AuthGuard>
+      // <AuthGuard>
         <SidebarProvider
           style={
             {
@@ -38,6 +38,6 @@ export default function Page() {
             </div>
           </SidebarInset>
         </SidebarProvider>
-      </AuthGuard>
+      // </AuthGuard>
   );
 }
