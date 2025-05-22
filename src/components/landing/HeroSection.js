@@ -54,7 +54,7 @@ export default function HeroSection() {
             <div className="relative z-10 flex flex-col justify-between text-white h-full">
                 {/* Today's Activities */}
                 <div>
-                    <h2 className="text-[18px] lg:text-[24px] font-medium">Kegiatan Hari Ini</h2>
+                    <h2 className="mb-1 text-[18px] lg:text-[24px] font-medium">Kegiatan Hari Ini</h2>
                     <h1 className="mb-3 lg:mb-6 text-[24px] lg:text-4xl font-bold">Minggu, 11 Mei</h1>
 
                     {/* Swiper Component */}
@@ -86,11 +86,11 @@ export default function HeroSection() {
 
                 {/* Next Prayer */}
                 <div className="mt-auto">
-                    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
+                    <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between">
                         <div data-aos="fade-right">
                             <h2 className="lg:mb-2 text-[16px] lg:text-[24px] font-medium">Jadwal Shalat Selanjutnya</h2>
                             <h1 className="lg:mb-2 text-[18px] lg:text-4xl font-bold">Shalat Dzuhur</h1>
-                            <p className="mb-2 lg:mb-4 flex items-center text-[16px] lg:text-[24px]">
+                            <p className="mb-2 lg:mb-0 flex items-center text-[16px] lg:text-[24px]">
                                 akan dimulai dalam <span className="mx-2 font-bold">01 jam : 19 menit</span> lagi
                             </p>
                         </div>
