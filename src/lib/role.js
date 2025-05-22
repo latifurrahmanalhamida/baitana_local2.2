@@ -27,7 +27,7 @@ export async function getRoles(searchQuery = "") {
         }
 
         const res = await response.json();
-        return res.data || [];
+        return res.data.roles || [];
     } catch (error) {
         console.error("Error getting user roles", error.message);
         throw error;
