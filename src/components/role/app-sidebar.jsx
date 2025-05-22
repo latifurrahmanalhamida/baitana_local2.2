@@ -14,9 +14,9 @@ import {
   SquareTerminal,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/role/nav-main"
+import { NavProjects } from "@/components/role/nav-projects"
+// import { NavUser } from "@/components/role/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
@@ -25,7 +25,7 @@ import {
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import {useAuth} from "@/context/AuthContext";
+// import {useAuth} from "@/context/AuthContext";
 
 // This is sample data.
 const data = {
@@ -58,46 +58,34 @@ const data = {
       icon: LayoutDashboardIcon,
     },
     {
-      title: "Playground",
+      title: "Infaq",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Infaq Masuk",
+          url: "/role/InfaqIncome",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Infaq Keluar",
+          url: "/role/InfaqOut",
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
+      title: "Reservasi",
+      url: "/role/reservation",
       icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Documentation",
+      title: "Acara",
+      url: "/role/event",
+      icon: BookOpen,
+      
+    },
+    {
+      title: "Jadwal Acara",
       url: "#",
       icon: BookOpen,
       items: [
@@ -120,53 +108,42 @@ const data = {
       ],
     },
     {
-      title: "Settings",
-      url: "#",
+      title: "Fasilitas",
+      url: "/role/facilities",
+      icon: BookOpen,
+
+    },
+    {
+      title: "News",
+      url: "/role/news",
       icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+  // projects: [
+  //   {
+  //     name: "Design Engineering",
+  //     url: "#",
+  //     icon: Frame,
+  //   },
+  //   {
+  //     name: "Sales & Marketing",
+  //     url: "#",
+  //     icon: PieChart,
+  //   },
+  //   {
+  //     name: "Travel",
+  //     url: "#",
+  //     icon: Map,
+  //   },
+  // ],
 }
 
 
 export function AppSidebar({
   ...props
 }) {
-  // const { user } = useAuth();
+    // const { user } = useAuth();
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -189,10 +166,11 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {/* <NavUser/> */}
+        {/* <NavUser user={user} /> */}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

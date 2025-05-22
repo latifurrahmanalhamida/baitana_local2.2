@@ -36,11 +36,11 @@ export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar();
-  const { logout } = useAuth();
+  // const { logout } = useAuth();
 
-  const handleLogout = async () => {
-    await logout();
-  }
+  // const handleLogout = async () => {
+  //   await logout();
+  // }
 
   return (
     <SidebarMenu>
@@ -101,7 +101,8 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            {/*<DropdownMenuItem onClick={handleLogout}>*/}
+            <DropdownMenuItem>
               <LogOut />
               Log out
             </DropdownMenuItem>
