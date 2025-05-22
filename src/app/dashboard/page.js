@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/sidebar"
 
 import data from "./data.json"
-import AuthGuard from "@/components/AuthGuard";
+// import AuthGuard from "@/components/AuthGuard";
 
 export default function Page() {
   return (
-      <AuthGuard>
+      // <AuthGuard>
         <SidebarProvider
           style={
             {
@@ -30,6 +30,7 @@ export default function Page() {
                   <SectionCards />
                   <div className="px-4 lg:px-6">
                     <ChartAreaInteractive />
+
                   </div>
                   <DataTable data={data} />
                 </div>
@@ -37,6 +38,6 @@ export default function Page() {
             </div>
           </SidebarInset>
         </SidebarProvider>
-      </AuthGuard>
+      // </AuthGuard>
   );
 }

@@ -166,7 +166,7 @@ const data = {
 export function AppSidebar({
   ...props
 }) {
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -192,7 +192,7 @@ export function AppSidebar({
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
