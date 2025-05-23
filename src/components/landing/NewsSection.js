@@ -5,6 +5,7 @@ export default function NewsSection() {
     const newsItems = [
         {
             id: 1,
+            slug: "renovasi-kubah-masjid-al-hidayah",
             title: "Renovasi Kubah Masjid Al-Hidayah Selesai, Kini Tampil Lebih Megah",
             date: "18 Mei 2025",
             author: "Administrator",
@@ -14,35 +15,38 @@ export default function NewsSection() {
         },
         {
             id: 2,
+            slug: "program-tahfidz-quran-masjid-nurul-iman",
             title: "Program Tahfidz Quran Masjid Nurul Iman Buka Pendaftaran Angkatan Baru",
             date: "15 Mei 2025",
             author: "Administrator",
             categories: ["Pendidikan", "Keagamaan"],
-            content: "Masjid Nurul Iman membuka pendaftaran untuk program Tahfidz Quran angkatan baru yang akan dimulai bulan Juni mendatang. Program ini terbuka untuk anak-anak usia 7-15 tahun dan akan dibimbing langsung oleh ustadz dan ustadzah yang telah hafal 30 juz Al-Quran. Metode pembelajaran yang diterapkan menggunakan pendekatan modern dan tradisional untuk memudahkan peserta dalam menghafal. Pendaftaran dapat dilakukan secara online melalui website resmi masjid atau langsung datang ke sekretariat masjid pada jam operasional.",
+            content: "Masjid Nurul Iman membuka pendaftaran untuk program Tahfidz Quran angkatan baru yang akan dimulai bulan Juni mendatang...",
             image: "news-temp.png",
         },
         {
             id: 3,
+            slug: "buka-puasa-bersama-anak-yatim",
             title: "Masjid Ar-Rahman Gelar Buka Puasa Bersama dan Santunan Anak Yatim",
             date: "10 Mei 2025",
             author: "Administrator",
             categories: ["Sosial", "Keagamaan"],
-            content: "Dalam rangka menyambut bulan suci Ramadhan, Masjid Ar-Rahman mengadakan acara buka puasa bersama dan santunan untuk 100 anak yatim dari panti asuhan sekitar. Acara yang diselenggarakan pada hari Minggu kemarin ini dihadiri oleh tokoh masyarakat dan pejabat setempat. Selain pemberian santunan berupa uang tunai dan perlengkapan sekolah, anak-anak yatim juga dihibur dengan penampilan qasidah dan ceramah motivasi. Ketua panitia, Bapak Ahmad Fauzi, menyampaikan bahwa kegiatan ini akan rutin diadakan setiap tahun sebagai bentuk kepedulian masjid terhadap anak-anak kurang mampu.",
+            content: "Dalam rangka menyambut bulan suci Ramadhan, Masjid Ar-Rahman mengadakan acara buka puasa bersama dan santunan untuk 100 anak yatim...",
             image: "news-temp.png",
         },
         {
             id: 4,
+            slug: "kajian-fiqih-muamalah-kontemporer",
             title: "Kajian Fiqih Muamalah Kontemporer Hadir di Masjid Baitul Muttaqin",
             date: "5 Mei 2025",
             author: "Administrator",
             categories: ["Pendidikan", "Keagamaan"],
-            content: "Masjid Baitul Muttaqin menghadirkan kajian rutin Fiqih Muamalah Kontemporer yang akan dilaksanakan setiap Kamis malam setelah sholat Isya. Kajian ini akan membahas berbagai persoalan ekonomi syariah modern seperti investasi digital, cryptocurrency, dan fintech dalam perspektif Islam. Ustadz Dr. Hasan Basri, pakar ekonomi syariah lulusan Al-Azhar Mesir, akan menjadi pemateri tetap dalam kajian ini. Masyarakat umum dipersilakan untuk mengikuti kajian tanpa dipungut biaya dan akan mendapatkan sertifikat kehadiran bagi yang mengikuti minimal 80% dari total pertemuan.",
+            content: "Masjid Baitul Muttaqin menghadirkan kajian rutin Fiqih Muamalah Kontemporer yang akan dilaksanakan setiap Kamis malam...",
             image: "news-temp.png",
         },
     ];
 
     return (
-        <section className="border border-red-700">
+        <section>
             <div className="px-6 py-12 lg:px-[86px] lg:py-[92px] ">
                 <h1 data-aos="fade-right" className="text-[#2C3E9E] text-2xl lg:text-[36px] font-bold">Berita Terkait</h1>
                 <h1 data-aos="fade-up" className="text-black text-sm lg:text-2xl text-justify lg:text-left font-extralight mb-6 lg:mb-6">Update Lengkap Tentang Berita Terkait Kegiatan Masjid</h1>
@@ -78,7 +82,7 @@ function NewsCard({news}) {
                     </div>
                 </div>
                 <div className="w-full md:w-2/3 space-y-3">
-                    <Link href="/" className="group">
+                    <Link href={`/news/${news.slug}`} className="group">
                         <h1 className="text-lg md:text-3xl font-medium text-[#2C3E9E] text-justify  group-hover:text-[#4050c0] transition-colors duration-300">
                             {news.title}
                         </h1>
@@ -95,7 +99,7 @@ function NewsCard({news}) {
                         {news.content}
                     </p>
                     <div className="flex justify-end">
-                        <Link href="#" className="group flex items-center text-[#2C3E9E] font-medium">
+                        <Link href={`/news/${news.slug}`} className="group flex items-center text-[#2C3E9E] font-medium">
                             <span className="text-sm md:text-[16px] relative after:absolute after:bottom-0 after:left-0 after:bg-current after:h-0.5 after:w-0 group-hover:after:w-full after:transition-all after:duration-300">
                                 Baca Selengkapnya
                                 <Image
