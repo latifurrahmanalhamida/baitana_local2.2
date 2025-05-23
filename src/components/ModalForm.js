@@ -10,22 +10,23 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function ModalForm({
-                              isOpen,
-                              onClose,
-                              title,
-                              children,
-                              onSubmit,
-                              isLoading,
-                              submitLabel = "Simpan",
-                              size = "sm",
-                          }) {
+    isOpen,
+    onClose,
+    title,
+    children,
+    onSubmit,
+    isLoading,
+    submitLabel = "Simpan",
+    size = "sm",
+}) {
     const sizeClass = {
         sm: "sm:max-w-[425px]",
         md: "sm:max-w-[550px]",
         lg: "sm:max-w-[725px]",
         xl: "sm:max-w-[900px]",
+        "2xl": "sm:max-w-[1024px]",
+        "3xl": "sm:max-w-[1280px]",
     };
-
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className={sizeClass[size]}>

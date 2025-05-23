@@ -1,4 +1,5 @@
-import {Geist, Geist_Mono, Urbanist} from "next/font/google";
+import { Toaster } from "sonner"
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import {AuthProvider} from "@/context/AuthContext";

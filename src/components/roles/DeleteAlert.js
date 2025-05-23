@@ -1,17 +1,15 @@
 "use client";
 
-import { useRole } from "@/context/RoleContext";
+import useRoles from "@/hooks/useRoles";
 import { ConfirmDelete } from "@/components/ModalConfirmDelete";
 
-export function DeleteAlert() {
-    const {
-        isDeleteAlertOpen,
-        setIsDeleteAlertOpen,
-        selectedRole,
-        handleDeleteRole,
-        isLoading
-    } = useRole();
-
+export function DeleteAlert({
+     isDeleteAlertOpen,
+     setIsDeleteAlertOpen,
+     selectedRole,
+     handleDeleteRole,
+     isLoading,
+}) {
     return (
         <ConfirmDelete
             isOpen={isDeleteAlertOpen}

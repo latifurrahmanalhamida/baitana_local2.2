@@ -8,7 +8,7 @@ export function InputError({ message, className, ...props }) {
 
     return (
         <p
-            className={cn("text-sm text-red-500 mt-1", className)}
+            className={cn("text-xs text-red-500 mt-1 ml-1", className)}
             {...props}
         >
             {message}

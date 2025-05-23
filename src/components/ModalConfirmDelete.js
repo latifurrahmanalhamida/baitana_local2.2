@@ -1,4 +1,3 @@
-// src/components/ui/confirm-delete.jsx
 "use client";
 
 import {
@@ -13,15 +12,15 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export function ConfirmDelete({
-                                  isOpen,
-                                  onClose,
-                                  onConfirm,
-                                  title = "Konfirmasi Hapus",
-                                  description,
-                                  confirmLabel = "Hapus",
-                                  cancelLabel = "Batal",
-                                  isLoading = false,
-                              }) {
+     isOpen,
+     onClose,
+     onConfirm,
+     title = "Konfirmasi Hapus",
+     description,
+     confirmLabel = "Hapus",
+     cancelLabel = "Batal",
+     isLoading = false,
+}) {
     return (
         <AlertDialog open={isOpen} onOpenChange={onClose}>
             <AlertDialogContent>
