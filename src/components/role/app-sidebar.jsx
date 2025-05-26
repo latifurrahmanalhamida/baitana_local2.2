@@ -16,7 +16,7 @@ import {
 
 import { NavMain } from "@/components/role/nav-main"
 import { NavProjects } from "@/components/role/nav-projects"
-// import { NavUser } from "@/components/role/nav-user"
+// import { NavUser } from "@/components/roles/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,

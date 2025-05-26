@@ -1,25 +1,37 @@
-"use client";
+"use client"
 
-import useRoles from "@/hooks/useRoles";
-import { RoleTable } from "@/components/roles/RoleTable";
-import { RoleForm } from "@/components/roles/RoleForm";
-import { DeleteAlert } from "@/components/roles/DeleteAlert";
+import { useEffect } from "react"
+import useRoles from "@/hooks/useRoles"
+import {DataTable} from "@/app/master/roles/data-table";
+import {createColumns} from "@/app/master/roles/column";
+import { RoleForm } from "@/components/roles/RoleForm"
+import { DeleteAlert } from "@/components/roles/DeleteAlert"
 
 export default function RolePage() {
-    const rolesHook = useRoles();
+    const rolesHook = useRoles()
+
+    // Fetch roless on component mount
+    useEffect(() => {
+        rolesHook.fetchRoles()
+    }, [])
+
+    // Create columns with action handlers
+    const columns = createColumns(rolesHook.openEditModal, rolesHook.openDeleteAlert)
 
     return (
-        <div className="container mx-auto py-8">
-            <h1 className="text-2xl font-bold mb-6">Manajemen Role</h1>
-            <RoleTable
-                roles={rolesHook.roles}
+        <div className="container mx-auto py-8 space-y-8">
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manajemen Role</h1>
+                <p className="text-lg text-muted-foreground">Kelola role dan permissions dalam sistem dengan mudah</p>
+            </div>
+
+            <DataTable
+                columns={columns}
+                data={rolesHook.roles}
                 isLoading={rolesHook.isLoading}
-                openAddModal={rolesHook.openAddModal}
-                openEditModal={rolesHook.openEditModal}
-                openDeleteAlert={rolesHook.openDeleteAlert}
-                fetchRoles={rolesHook.fetchRoles}
                 searchQuery={rolesHook.searchQuery}
-                handleSearch={rolesHook.handleSearch}
+                onSearchChange={rolesHook.handleSearch}
+                onAddNew={rolesHook.openAddModal}
             />
 
             <RoleForm
@@ -39,5 +51,5 @@ export default function RolePage() {
                 isLoading={rolesHook.isLoading}
             />
         </div>
-    );
+    )
 }

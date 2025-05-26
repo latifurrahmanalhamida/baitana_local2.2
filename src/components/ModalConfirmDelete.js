@@ -26,7 +26,7 @@ export function ConfirmDelete({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogDescription className="text-justify">
                         {description}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
