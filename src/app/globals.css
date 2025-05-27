@@ -121,3 +121,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Sonner Toast */
+.sonner-toaster[data-sonner-toaster] {
+  overflow: visible !important;
+}
+
+.sonner-toast[data-sonner-toast] {
+  overflow: visible !important;
+}

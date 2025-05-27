@@ -3,8 +3,6 @@ import { Urbanist } from "next/font/google";
 
 import '../globals.css';
 
-import AOSInit from "@/components/AOSInit";
-
 
 const urbanist = Urbanist({
     variable: "--font-urbanist",
@@ -23,8 +21,13 @@ export default function RootLayout({ children }) {
         <body
             className={`${urbanist.variable} antialiased font-main bg-[#FAFAFA]`}
         >
-            <AOSInit />
-            <Toaster richColors />
+            <Toaster richColors
+                toastOptions={{
+                    style: {
+                        pointerEvents: 'auto',
+                    }
+                }}
+            />
             {children}
         </body>
         </html>
