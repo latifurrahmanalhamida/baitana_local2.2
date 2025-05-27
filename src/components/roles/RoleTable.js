@@ -53,7 +53,7 @@ export function RoleTable({
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
 
-    // Fetch roles on component mount
+    // Fetch roless on component mount
     useEffect(() => {
         fetchRoles();
     }, [searchQuery]); // Re-fetch when search query changes
@@ -71,7 +71,7 @@ export function RoleTable({
         setSortField(field);
         setSortDirection(direction);
 
-        // Sort the roles
+        // Sort the roless
         const sortedRoles = [...roles].sort((a, b) => {
             if (direction === "asc") {
                 return a[field] > b[field] ? 1 : -1;
@@ -422,7 +422,7 @@ export function RoleTable({
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 //
 // export function RoleTable({
-//                               roles: initialRoles = [],
+//                               roless: initialRoles = [],
 //                               isLoading,
 //                               openAddModal,
 //                               openEditModal,
@@ -436,9 +436,9 @@ export function RoleTable({
 //     const [sortDirection, setSortDirection] = useState("asc");
 //     const [currentPage, setCurrentPage] = useState(1);
 //     const [itemsPerPage, setItemsPerPage] = useState(10);
-//     const [roles, setRoles] = useState(initialRoles);
+//     const [roless, setRoles] = useState(initialRoles);
 //
-//     // Update roles when initialRoles changes
+//     // Update roless when initialRoles changes
 //     useEffect(() => {
 //         if (initialRoles && initialRoles.length > 0) {
 //             setRoles(initialRoles);
@@ -446,11 +446,11 @@ export function RoleTable({
 //     }, [initialRoles]);
 //
 //     // Calculate pagination
-//     const totalItems = roles.length;
+//     const totalItems = roless.length;
 //     const totalPages = Math.ceil(totalItems / itemsPerPage);
 //     const indexOfLastItem = currentPage * itemsPerPage;
 //     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-//     const currentRoles = roles.slice(indexOfFirstItem, indexOfLastItem);
+//     const currentRoles = roless.slice(indexOfFirstItem, indexOfLastItem);
 //
 //     // Handle sorting
 //     const handleSort = (field) => {
@@ -458,8 +458,8 @@ export function RoleTable({
 //         setSortField(field);
 //         setSortDirection(direction);
 //
-//         // Sort the roles
-//         const sortedRoles = [...roles].sort((a, b) => {
+//         // Sort the roless
+//         const sortedRoles = [...roless].sort((a, b) => {
 //             if (direction === "asc") {
 //                 return a[field] > b[field] ? 1 : -1;
 //             } else {
@@ -470,7 +470,7 @@ export function RoleTable({
 //         setRoles(sortedRoles);
 //     };
 //
-//     // Fetch roles on component mount
+//     // Fetch roless on component mount
 //     useEffect(() => {
 //         fetchRoles();
 //     }, [searchQuery]);
@@ -563,7 +563,7 @@ export function RoleTable({
 //                     <div className="relative w-full sm:max-w-xs">
 //                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
 //                         <Input
-//                             placeholder="Cari role..."
+//                             placeholder="Cari roles..."
 //                             value={searchQuery}
 //                             onChange={(e) => handleSearch(e.target.value)}
 //                             className="pl-8 border-gray-200 focus-visible:ring-[#2C3E9E] focus-visible:border-[#2C3E9E]"
@@ -625,30 +625,30 @@ export function RoleTable({
 //                                     </TableCell>
 //                                 </TableRow>
 //                             ))
-//                         ) : roles.length === 0 ? (
+//                         ) : roless.length === 0 ? (
 //                             <TableRow>
 //                                 <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-//                                     Tidak ada data role
+//                                     Tidak ada data roles
 //                                 </TableCell>
 //                             </TableRow>
 //                         ) : (
-//                             currentRoles.map((role, index) => (
-//                                 <TableRow key={role.id} className="hover:bg-gray-50">
+//                             currentRoles.map((roles, index) => (
+//                                 <TableRow key={roles.id} className="hover:bg-gray-50">
 //                                     <TableCell className="text-center font-medium text-gray-500">
 //                                         {indexOfFirstItem + index + 1}
 //                                     </TableCell>
 //                                     <TableCell>
 //                                         <Badge variant="outline" className="bg-blue-50 text-[#2C3E9E] border-[#2C3E9E]/30 font-medium">
-//                                             {role.role_code}
+//                                             {roles.role_code}
 //                                         </Badge>
 //                                     </TableCell>
 //                                     <TableCell className="hidden sm:table-cell font-medium">
-//                                         {role.name}
+//                                         {roles.name}
 //                                     </TableCell>
 //                                     <TableCell className="hidden md:table-cell">
 //                                         <div className="flex flex-col">
-//                                             <span className="text-xs text-gray-600">{role.created_at}</span>
-//                                             <span className="text-xs text-gray-400 mt-1">{role.created_at_human}</span>
+//                                             <span className="text-xs text-gray-600">{roles.created_at}</span>
+//                                             <span className="text-xs text-gray-400 mt-1">{roles.created_at_human}</span>
 //                                         </div>
 //                                     </TableCell>
 //                                     <TableCell>
@@ -656,7 +656,7 @@ export function RoleTable({
 //                                             <Button
 //                                                 variant="ghost"
 //                                                 size="icon"
-//                                                 onClick={() => openEditModal(role)}
+//                                                 onClick={() => openEditModal(roles)}
 //                                                 className="h-8 w-8 text-gray-500 hover:text-[#2C3E9E] hover:bg-blue-50"
 //                                                 title="Edit"
 //                                             >
@@ -665,7 +665,7 @@ export function RoleTable({
 //                                             <Button
 //                                                 variant="ghost"
 //                                                 size="icon"
-//                                                 onClick={() => openDeleteAlert(role)}
+//                                                 onClick={() => openDeleteAlert(roles)}
 //                                                 className="h-8 w-8 text-gray-500 hover:text-red-500 hover:bg-red-50"
 //                                                 title="Delete"
 //                                             >
@@ -726,7 +726,7 @@ export function RoleTable({
 // import { Plus, Search, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pencil, Trash2 } from "lucide-react";
 //
 // export function RoleTable({
-//                               roles: initialRoles = [],
+//                               roless: initialRoles = [],
 //                               isLoading,
 //                               openAddModal,
 //                               openEditModal,
@@ -740,9 +740,9 @@ export function RoleTable({
 //     const [sortDirection, setSortDirection] = useState("asc");
 //     const [currentPage, setCurrentPage] = useState(1);
 //     const [itemsPerPage, setItemsPerPage] = useState(10);
-//     const [roles, setRoles] = useState(initialRoles);
+//     const [roless, setRoles] = useState(initialRoles);
 //
-//     // Update roles when initialRoles changes
+//     // Update roless when initialRoles changes
 //     useEffect(() => {
 //         if (initialRoles && initialRoles.length > 0) {
 //             setRoles(initialRoles);
@@ -750,11 +750,11 @@ export function RoleTable({
 //     }, [initialRoles]);
 //
 //     // Calculate pagination
-//     const totalItems = roles.length;
+//     const totalItems = roless.length;
 //     const totalPages = Math.ceil(totalItems / itemsPerPage);
 //     const indexOfLastItem = currentPage * itemsPerPage;
 //     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-//     const currentRoles = roles.slice(indexOfFirstItem, indexOfLastItem);
+//     const currentRoles = roless.slice(indexOfFirstItem, indexOfLastItem);
 //
 //     // Handle sorting
 //     const handleSort = (field) => {
@@ -762,8 +762,8 @@ export function RoleTable({
 //         setSortField(field);
 //         setSortDirection(direction);
 //
-//         // Sort the roles
-//         const sortedRoles = [...roles].sort((a, b) => {
+//         // Sort the roless
+//         const sortedRoles = [...roless].sort((a, b) => {
 //             if (direction === "asc") {
 //                 return a[field] > b[field] ? 1 : -1;
 //             } else {
@@ -774,7 +774,7 @@ export function RoleTable({
 //         setRoles(sortedRoles);
 //     };
 //
-//     // Fetch roles on component mount
+//     // Fetch roless on component mount
 //     useEffect(() => {
 //         fetchRoles();
 //     }, [searchQuery]);
@@ -881,7 +881,7 @@ export function RoleTable({
 //                 <div className="relative w-full">
 //                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
 //                     <Input
-//                         placeholder="Cari role..."
+//                         placeholder="Cari roles..."
 //                         value={searchQuery}
 //                         onChange={(e) => handleSearch(e.target.value)}
 //                         className="pl-8 border-gray-200 focus-visible:ring-[#2C3E9E] focus-visible:border-[#2C3E9E]"
@@ -927,39 +927,39 @@ export function RoleTable({
 //                         <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#2C3E9E] border-t-transparent"></div>
 //                         <p className="mt-2 text-gray-500 text-sm">Loading...</p>
 //                     </div>
-//                 ) : roles.length === 0 ? (
+//                 ) : roless.length === 0 ? (
 //                     <div className="py-12 text-center">
-//                         <p className="text-gray-500 text-sm">Tidak ada data role</p>
+//                         <p className="text-gray-500 text-sm">Tidak ada data roles</p>
 //                     </div>
 //                 ) : (
 //                     <div>
-//                         {currentRoles.map((role, index) => (
+//                         {currentRoles.map((roles, index) => (
 //                             <div
-//                                 key={role.id}
+//                                 key={roles.id}
 //                                 className="grid grid-cols-5 border-b border-gray-100 text-sm hover:bg-gray-50"
 //                             >
 //                                 <div className="px-4 py-3 text-center">{indexOfFirstItem + index + 1}</div>
 //                                 <div className="px-4 py-3">
 //                   <span className="inline-flex items-center rounded-full border border-[#2C3E9E] px-2 py-0.5 text-xs font-medium text-[#2C3E9E]">
-//                     {role.role_code}
+//                     {roles.role_code}
 //                   </span>
 //                                 </div>
-//                                 <div className="px-4 py-3 font-medium">{role.name}</div>
+//                                 <div className="px-4 py-3 font-medium">{roles.name}</div>
 //                                 <div className="px-4 py-3">
 //                                     <div className="flex flex-col">
-//                                         <span className="text-xs text-gray-500">{role.created_at}</span>
-//                                         <span className="text-xs text-gray-400">{role.created_at_human}</span>
+//                                         <span className="text-xs text-gray-500">{roles.created_at}</span>
+//                                         <span className="text-xs text-gray-400">{roles.created_at_human}</span>
 //                                     </div>
 //                                 </div>
 //                                 <div className="px-4 py-3 flex justify-center gap-1">
 //                                     <button
-//                                         onClick={() => openEditModal(role)}
+//                                         onClick={() => openEditModal(roles)}
 //                                         className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-blue-50 hover:text-[#2C3E9E] border-none bg-transparent"
 //                                     >
 //                                         <Pencil size={14} />
 //                                     </button>
 //                                     <button
-//                                         onClick={() => openDeleteAlert(role)}
+//                                         onClick={() => openDeleteAlert(roles)}
 //                                         className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-red-50 hover:text-red-500 border-none bg-transparent"
 //                                     >
 //                                         <Trash2 size={14} />

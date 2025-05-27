@@ -1,94 +1,97 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { toast } from "sonner";
-import { getRoles, createRole, updateRole, deleteRole } from "@/lib/role";
+import { useState, useCallback } from "react"
+import { toast } from "sonner"
+import { getRoles, createRole, updateRole, deleteRole } from "@/lib/role"
 
 export default function useRoles() {
-    const [roles, setRoles] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
-    const [selectedRole, setSelectedRole] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [roles, setRoles] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false)
+    const [selectedRole, setSelectedRole] = useState(null)
+    const [searchQuery, setSearchQuery] = useState("")
 
-    const fetchRoles = async () => {
-        setIsLoading(true);
+    const fetchRoles = useCallback(async () => {
+        setIsLoading(true)
         try {
-            const roles = await getRoles(searchQuery);
-            console.log(roles);
-            setRoles(roles);
+            const roles = await getRoles(searchQuery)
+            setRoles(roles)
         } catch (error) {
-            toast.error("Gagal memuat data role");
-            console.error(error);
+            toast.error("Gagal memuat data roles")
+            console.error("Fetch roless error:", error)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }, [searchQuery])
 
     const handleAddRole = async (values) => {
-        setIsLoading(true);
+        setIsLoading(true)
         try {
-            await createRole(values);
-            toast.success("Role berhasil ditambahkan");
-            setIsModalOpen(false);
-            fetchRoles();
+            const res = await createRole(values)
+            toast.success(res.message)
+            setIsModalOpen(false)
+            await fetchRoles()
         } catch (error) {
-            toast.error("Gagal menambahkan role");
-            console.error(error);
+            toast.error("Gagal menambahkan roles")
+            console.error("Add roles error:", error)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     const handleEditRole = async (values) => {
-        setIsLoading(true);
+        if (!selectedRole) return
+
+        setIsLoading(true)
         try {
-            const res = await updateRole(selectedRole.id, values);
-            toast.success(res.message);
-            setIsModalOpen(false);
-            fetchRoles();
+            const res = await updateRole(selectedRole.id, values)
+            toast.success(res.message)
+            setIsModalOpen(false)
+            await fetchRoles()
         } catch (error) {
-            toast.error("Gagal memperbarui role");
-            console.error(error);
+            toast.error("Gagal memperbarui roles")
+            console.error("Edit roles error:", error)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     const handleDeleteRole = async () => {
-        setIsLoading(true);
+        if (!selectedRole) return
+
+        setIsLoading(true)
         try {
-            const res = await deleteRole(selectedRole.id);
-            toast.success(res.message);
-            setIsDeleteAlertOpen(false);
-            fetchRoles();
+            const res = await deleteRole(selectedRole.id)
+            toast.success(res.message)
+            setIsDeleteAlertOpen(false)
+            await fetchRoles()
         } catch (error) {
-            toast.error("Gagal menghapus role");
-            console.error(error);
+            toast.error("Gagal menghapus roles")
+            console.error("Delete roles error:", error)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     const openAddModal = () => {
-        setSelectedRole(null);
-        setIsModalOpen(true);
-    };
+        setSelectedRole(null)
+        setIsModalOpen(true)
+    }
 
     const openEditModal = (role) => {
-        setSelectedRole(role);
-        setIsModalOpen(true);
-    };
+        setSelectedRole(role)
+        setIsModalOpen(true)
+    }
 
     const openDeleteAlert = (role) => {
-        setSelectedRole(role);
-        setIsDeleteAlertOpen(true);
-    };
+        setSelectedRole(role)
+        setIsDeleteAlertOpen(true)
+    }
 
     const handleSearch = (query) => {
-        setSearchQuery(query);
-    };
+        setSearchQuery(query)
+    }
 
     return {
         roles,
@@ -106,6 +109,6 @@ export default function useRoles() {
         openAddModal,
         openEditModal,
         openDeleteAlert,
-        handleSearch
-    };
+        handleSearch,
+    }
 }
