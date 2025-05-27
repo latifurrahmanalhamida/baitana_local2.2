@@ -12,9 +12,10 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
         id: "index",
         header: () => <div className="text-center font-semibold">#</div>,
         cell: ({ row, table }) => {
-            const pageIndex = table.getState().pagination.pageIndex
-            const pageSize = table.getState().pagination.pageSize
-            return <div className="text-center font-medium text-muted-foreground">{pageIndex * pageSize + row.index + 1}</div>
+            const originalData = table.options.data
+            const currentRowId = row.original.id
+            const originalIndex = originalData.findIndex(item => item.id === currentRowId) + 1
+            return <div className="text-center font-medium text-muted-foreground">{originalIndex}</div>
         },
         enableSorting: false,
         size: 60,
@@ -47,7 +48,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start"
+                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start hover:cursor-pointer"
                 >
                     Nama User
                     <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -79,7 +80,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                        className="h-auto p-0 font-semibold hover:bg-transparent hover:cursor-pointer"
                     >
                         Role
                         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -106,7 +107,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start"
+                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start hover:cursor-pointer"
                 >
                     Tanggal Dibuat
                     <ArrowUpDown className="ml-2 h-4 w-4" />

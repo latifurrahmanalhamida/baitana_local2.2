@@ -45,9 +45,9 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         globalFilterFn: (row, columnId, filterValue) => { // filter
-            const search = filterValue.toLowerCase()
+            const search = filterValue.toLowerCase().trim()
             return (
-                row.getValue("name")?.toLowerCase().includes(search) ||
+                row.original.name?.toLowerCase().includes(search) ||
                 row.original.code?.toLowerCase().includes(search) ||
                 row.original.email?.toLowerCase().includes(search) ||
                 row.original.role?.name?.toLowerCase().includes(search) ||

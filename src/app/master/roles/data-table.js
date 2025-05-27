@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useDebounce } from "use-debounce";
 import {
     flexRender,
     getCoreRowModel,
@@ -29,23 +30,35 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
     const [columnFilters, setColumnFilters] = React.useState([])
     const [columnVisibility, setColumnVisibility] = React.useState({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [deboucedSerachQuery] = useDebounce(searchQuery, 300) // filter (tunda 300ms)
 
     const table = useReactTable({
         data,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        onGlobalFilterChange: onSearchChange,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
+        globalFilterFn: (row, columnId, filterValue) => { // filter
+            const search = filterValue.toLowerCase().trim();
+            return (
+                row.original.role_code?.toLowerCase().includes(search) ||
+                row.original.name?.toLowerCase().includes(search) ||
+                row.original.created_at?.toLowerCase().includes(search) ||
+                row.original.created_at_human?.toLowerCase().includes(search)
+            )
+        },
         state: {
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
+            globalFilter: deboucedSerachQuery, // filter with debounce
         },
         initialState: {
             pagination: {
@@ -53,11 +66,6 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
             },
         },
     })
-
-    // Update global filter when searchQuery changes
-    React.useEffect(() => {
-        table.getColumn("name")?.setFilterValue(searchQuery)
-    }, [searchQuery, table])
 
     return (
         <Card className="shadow-sm border-gray-200">
