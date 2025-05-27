@@ -1,5 +1,5 @@
 import { Toaster } from "sonner"
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Urbanist } from "next/font/google";
 import "./globals.css";
 
 import {AuthProvider} from "@/context/AuthContext";
@@ -37,9 +37,9 @@ export default function RootLayout({ children }) {
             >
                 <AuthProvider>
                     <AOSInit />
-                    <Navbar />
+                    {/* <Navbar /> */}
                         {children}
-                    <Footer />
+                    {/* <Footer /> */}
                 </AuthProvider>
             </body>
         </html>
