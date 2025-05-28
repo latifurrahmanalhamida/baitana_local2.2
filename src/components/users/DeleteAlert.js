@@ -1,22 +1,22 @@
-"use client";
+"use client"
 
 import { ConfirmDelete } from "@/components/ModalConfirmDelete";
 
-export function DeleteAlert({
-     isDeleteAlertOpen,
-     setIsDeleteAlertOpen,
-     selectedRole,
-     handleDeleteRole,
-     isLoading,
+export default function DeleteAlert({
+    isDeleteAlertOpen,
+    setIsDeleteAlertOpen,
+    selectedUser,
+    handleDeleteUser,
+    isLoading
 }) {
     return (
         <ConfirmDelete
             isOpen={isDeleteAlertOpen}
             onClose={setIsDeleteAlertOpen}
-            onConfirm={handleDeleteRole}
+            onConfirm={handleDeleteUser}
             description={
                 <>
-                    Apakah Anda yakin ingin menghapus role <strong>{selectedRole?.name}</strong>?
+                    Apakah Anda yakin ingin menghapus user <strong>{selectedUser?.name}</strong>?
                     Tindakan ini tidak dapat dibatalkan.
                 </>
             }

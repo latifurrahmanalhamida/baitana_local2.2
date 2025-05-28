@@ -37,12 +37,12 @@ export function ModalForm({
                     <DialogTitle>{title}</DialogTitle>
                 </DialogHeader>
                 {description && (
-                    <DialogDescription className="text-muted-foreground p-0">
+                    <DialogDescription className="text-center md:text-start text-muted-foreground p-0">
                         {description}
                     </DialogDescription>
                 )}
 
-                <form onSubmit={onSubmit} className="space-y-4 py-2">
+                <form onSubmit={onSubmit} className="space-y-4 pt-2">
                     {children}
 
                     <DialogFooter>

@@ -19,7 +19,7 @@ export default function useRoles() {
             setRoles(roles)
         } catch (error) {
             toast.error("Gagal memuat data roles")
-            console.error("Fetch roless error:", error)
+            console.error("Fetch roles error:", error)
         } finally {
             setIsLoading(false)
         }

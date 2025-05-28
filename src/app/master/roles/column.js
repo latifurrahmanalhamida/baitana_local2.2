@@ -25,7 +25,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start"
+                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start hover:cursor-pointer"
                 >
                     Kode Role
                     <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -48,7 +48,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start"
+                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start hover:cursor-pointer"
                 >
                     Nama Role
                     <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -67,7 +67,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start"
+                    className="h-auto p-0 font-semibold hover:bg-transparent text-left justify-start hover:cursor-pointer"
                 >
                     Tanggal Dibuat
                     <ArrowUpDown className="ml-2 h-4 w-4" />

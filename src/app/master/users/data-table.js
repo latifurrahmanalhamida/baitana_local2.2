@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useDebounce } from "use-debounce";
+import { useDebounce } from "use-debounce"
 import {
     flexRender,
     getCoreRowModel,
@@ -30,7 +30,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
     const [columnFilters, setColumnFilters] = React.useState([])
     const [columnVisibility, setColumnVisibility] = React.useState({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [deboucedSerachQuery] = useDebounce(searchQuery, 300) // filter (tunda 300ms)
+    const [debouncedSearchQuery] = useDebounce(searchQuery, 300) // filter (tunda 300ms)
 
     const table = useReactTable({
         data,
@@ -39,16 +39,18 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        onGlobalFilterChange: onSearchChange,
+        onGlobalFilterChange: onSearchChange, // filter
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         globalFilterFn: (row, columnId, filterValue) => { // filter
-            const search = filterValue.toLowerCase().trim();
+            const search = filterValue.toLowerCase().trim()
             return (
-                row.original.role_code?.toLowerCase().includes(search) ||
                 row.original.name?.toLowerCase().includes(search) ||
+                row.original.code?.toLowerCase().includes(search) ||
+                row.original.email?.toLowerCase().includes(search) ||
+                row.original.role?.name?.toLowerCase().includes(search) ||
                 row.original.created_at?.toLowerCase().includes(search) ||
                 row.original.created_at_human?.toLowerCase().includes(search)
             )
@@ -58,7 +60,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
             columnFilters,
             columnVisibility,
             rowSelection,
-            globalFilter: deboucedSerachQuery, // filter with debounce
+            globalFilter: debouncedSearchQuery, // filter debounce
         },
         initialState: {
             pagination: {
@@ -75,7 +77,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Cari role..."
+                                placeholder="Cari users"
                                 value={searchQuery}
                                 onChange={(event) => onSearchChange(event.target.value)}
                                 className="pl-9 h-10 border-gray-300 focus:border-[#2C3E9E] focus:ring-[#2C3E9E]"
@@ -102,13 +104,15 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                                                 checked={column.getIsVisible()}
                                                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
                                             >
-                                                {column.id === "role_code"
-                                                    ? "Kode Role"
+                                                {column.id === "photo"
+                                                    ? "Foto"
                                                     : column.id === "name"
-                                                        ? "Nama Role"
-                                                        : column.id === "created_at"
-                                                            ? "Tanggal Dibuat"
-                                                            : column.id}
+                                                        ? "Nama User"
+                                                        : column.id === "role"
+                                                            ? "Role"
+                                                            : column.id === "created_at"
+                                                                ? "Tanggal Dibuat"
+                                                                : column.id}
                                             </DropdownMenuCheckboxItem>
                                         )
                                     })}
@@ -118,7 +122,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                     <div className="flex items-center gap-2">
                         <Button onClick={onAddNew} className="bg-[#2C3E9E] hover:bg-[#243280] h-10 px-4 font-medium">
                             <Plus className="h-4 w-4" />
-                            Tambah Role
+                            Tambah User
                         </Button>
                     </div>
                 </div>
@@ -172,9 +176,9 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                                 <TableRow>
                                     <TableCell colSpan={columns.length} className="h-32 text-center">
                                         <div className="flex flex-col items-center justify-center space-y-2">
-                                            <div className="text-muted-foreground">Tidak ada data role ditemukan</div>
+                                            <div className="text-muted-foreground">Tidak ada data user ditemukan</div>
                                             <div className="text-sm text-muted-foreground">
-                                                Coba ubah filter pencarian atau tambah role baru
+                                                Coba ubah filter pencarian atau tambah user baru
                                             </div>
                                         </div>
                                     </TableCell>
