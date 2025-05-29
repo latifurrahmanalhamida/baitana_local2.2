@@ -10,7 +10,7 @@ const urbanist = Urbanist({
     variable: "--font-urbanist",
     subsets: ["latin"],
     weight: "400"
-})
+});
 
 export const metadata = {
     title: "Create Next App",
