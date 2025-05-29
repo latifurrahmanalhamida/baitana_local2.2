@@ -1,21 +1,27 @@
 import { z } from "zod";
 
 export const eventSchema = z.object({
+  kodeAcara: z
+    .string()
+    .min(1, { message: "Kode acara harus diisi" })
+    .max(50, { message: "Kode acara maksimal 50 karakter" }),
+
   title: z
     .string()
     .min(3, { message: "Judul acara minimal 3 karakter" })
     .max(100, { message: "Judul acara maksimal 100 karakter" }),
-  location: z
+
+  deskripsi: z
     .string()
-    .min(3, { message: "Lokasi minimal 3 karakter" })
-    .max(100, { message: "Lokasi maksimal 100 karakter" }),
-  date: z
+    .max(500, { message: "Deskripsi maksimal 500 karakter" })
+    .optional(),
+
+  lokasi: z
     .string()
-    .nonempty({ message: "Tanggal acara harus diisi" })
-    .refine((val) => {
-      const date = new Date(val);
-      return !isNaN(date.getTime());
-    }, {
-      message: "Format tanggal tidak valid",
-    }),
+    .max(100, { message: "Lokasi maksimal 100 karakter" })
+    .optional(),
+
+  jenisAcaraId: z
+    .string()
+    .min(1, { message: "Jenis acara harus dipilih" }),
 });
