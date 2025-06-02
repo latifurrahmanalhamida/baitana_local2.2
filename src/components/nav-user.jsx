@@ -71,7 +71,7 @@ export function NavUser({
               <Avatar className="h-10 w-10 rounded-full">
                 {/* Periksa user.photo sebelum mengakses */}
                 <AvatarImage src={user.photo ? `${API_URL}/storage/${user.photo}` : ''} alt={user.name || 'User Avatar'} />
-                <AvatarFallback className="rounded-lg">
+                <AvatarFallback className="rounded-lg font-bold border border-gray-200">
                   {user.name // Gunakan logika inisial di sini
                       ? user.name
                           .split(" ")
@@ -99,7 +99,7 @@ export function NavUser({
                 <Avatar className="h-8 w-8 rounded-lg">
                   {/* Periksa user.photo sebelum mengakses */}
                   <AvatarImage src={user.photo ? `${API_URL}/storage/${user.photo}` : ''} alt={user.name || 'User Avatar'} />
-                  <AvatarFallback className="bg-blue-100 text-blue-600">
+                  <AvatarFallback className="bg-blue-100 text-blue-600 font-bold">
                     {user.name // Logika inisial yang sama
                         ? user.name
                             .split(" ")

@@ -29,10 +29,16 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
 
             return (
                 <div className="flex justify-center">
-                    <Avatar className="h-18 w-18 object-cover object-center">
+                    <Avatar className="h-16 w-16 object-cover object-center">
                         <AvatarImage src={photoUrl || "/placeholder.svg"} alt={user.name} />
-                        <AvatarFallback className="bg-blue-100 text-blue-600">
-                            {user.name?.charAt(0)?.toUpperCase() || <User className="h-4 w-4" />}
+                        <AvatarFallback className="bg-blue-100 text-blue-600 font-bold">
+                            {
+                                user.name ?
+                                    user.name.split(" ").slice(0, 2)
+                                    .map((word) => word.charAt(0)).join(" ").toUpperCase()
+                                        :
+                                    <User className="h-4 w-4" />
+                            }
                         </AvatarFallback>
                     </Avatar>
                 </div>

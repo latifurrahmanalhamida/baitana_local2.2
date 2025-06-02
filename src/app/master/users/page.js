@@ -19,9 +19,9 @@ export default function UserPage() {
     const columns = createColumns(usersHook.openEditModal, usersHook.openDeleteAlert)
 
     return (
-        <div className="container mx-auto py-8 space-y-8">
+        <div className="container mx-auto space-y-6">
             <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manajemen User</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-gray-900">Manajemen User</h1>
                 <p className="text-lg text-muted-foreground">Kelola data user dan role dalam sistem dengan mudah</p>
             </div>
 
