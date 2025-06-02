@@ -27,7 +27,8 @@ const loginSchema = z.object({
 export function LoginForm({ className, ...props }) {
   const { login, authLoading, error } = useAuth();
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-  const [logoutSuccessDialogOpen, setLogoutSuccessDialogOpen] = useState(false);
+  const [logoutMessageDialogOpen, setLogoutMessageDialogOpen] = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
@@ -56,10 +57,31 @@ export function LoginForm({ className, ...props }) {
 
   // Efek untuk memeriksa query parameter 'logout_success' saat komponen dimuat
   useEffect(() => {
-    if (searchParams.get('logout_success') === 'true') {
-      setLogoutSuccessDialogOpen(true);
+    const logoutReason = searchParams.get("logout");
+    const logoutSuccess = searchParams.get("logout_success");
+
+    let messageToDisplay = "";
+    let shouldOpenDialog = false;
+
+    if (logoutReason === 'forbidden') {
+      messageToDisplay = "Akses ditolak. Anda telah dikeluarkan dari sesi karena tidak memiliki izin.";
+      shouldOpenDialog = true;
+    } else if (logoutSuccess === 'true') {
+      messageToDisplay = "Anda telah berhasil keluar dari akun Anda.";
+      shouldOpenDialog = true;
+    }
+
+    if (shouldOpenDialog) {
+      setLogoutMessage(messageToDisplay);
+      setLogoutMessageDialogOpen(true);
+
       const newUrl = new URL(window.location.href);
-      newUrl.searchParams.delete('logout_success');
+      if (searchParams.has('logout')) {
+        newUrl.searchParams.delete('logout');
+      }
+      if (searchParams.has('logout_success')) {
+        newUrl.searchParams.delete('logout_success');
+      }
       router.replace(newUrl.pathname + newUrl.search);
     }
   }, [searchParams, router]);
@@ -95,17 +117,19 @@ export function LoginForm({ className, ...props }) {
                     </AlertDialog>
                 )}
 
-                {logoutSuccessDialogOpen && (
-                    <AlertDialog open={logoutSuccessDialogOpen} onOpenChange={setLogoutSuccessDialogOpen}>
+                {logoutMessageDialogOpen && (
+                    <AlertDialog open={logoutMessageDialogOpen} onOpenChange={setLogoutMessageDialogOpen}>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle className={"text-center text-green-500"}>Berhasil Logout!</AlertDialogTitle>
+                          <AlertDialogTitle className={`text-center ${logoutMessage.includes('berhasil') ? 'text-green-500' : 'text-orange-500'}`}>
+                            {logoutMessage.includes('berhasil') ? 'Informasi Logout' : 'Sesi Berakhir'}
+                          </AlertDialogTitle>
                           <AlertDialogDescription className={"text-center"}>
-                            Anda telah berhasil keluar dari akun Anda.
+                            {logoutMessage}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogAction className={"mx-auto "} onClick={() => setLogoutSuccessDialogOpen(false)}>
+                          <AlertDialogAction className={"mx-auto "} onClick={() => setLogoutMessageDialogOpen(false)}>
                             OK
                           </AlertDialogAction>
                         </AlertDialogFooter>

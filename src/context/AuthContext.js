@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
             console.error("Logout API call failed:", err.message);
         } finally {
             apiClient.removeToken();
+
             setToken(null);
             setUser(null);
             setTokenExpiryTime(0);
@@ -66,6 +67,9 @@ export const AuthProvider = ({ children }) => {
             fetchUser(savedToken);
         } else {
             apiClient.removeToken();
+            setToken(null);
+            setUser(null);
+            setTokenExpiryTime(0);
             setLoading(false);
         }
     }, []);

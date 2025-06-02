@@ -149,6 +149,11 @@ class ApiClient {
         try {
             const response = await fetch(url, requestOptions);
 
+            if (response.status === 403) {
+                this.logout();
+                throw new Error("Akses dilarang. Anda telah dikeluarkan dari sesi.");
+            }
+
             if (response.status === 401) {
                 try {
                     const { token: newToken } = await this.refreshToken();
@@ -167,8 +172,6 @@ class ApiClient {
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 switch (response.status) {
-                    case 403:
-                        throw new Error("Tidak memiliki akses untuk melakukan aksi ini");
                     case 404:
                         throw new Error("Data tidak ditemukan");
                     case 422:
@@ -196,7 +199,7 @@ class ApiClient {
     logout() {
         this.removeToken();
         if (typeof window !== 'undefined') {
-            window.location.href = '/auth/login';
+            window.location.replace('/auth/login?logout=forbidden');
         }
     }
 }
