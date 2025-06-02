@@ -1,13 +1,6 @@
-import { Urbanist } from "next/font/google";
 import '../globals.css';
 import {AuthProvider} from "@/context/AuthContext";
 
-
-const urbanist = Urbanist({
-    variable: "--font-urbanist",
-    subsets: ["latin"],
-    weight: "400"
-})
 
 export const metadata = {
     title: "Create Next App",

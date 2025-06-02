@@ -7,27 +7,49 @@ class ApiClient {
         this.isRefreshing = false;
         this.failedQueue = [];
         this.refreshPromise = null;
+        this.onTokenRefreshedCallback = null;
+    }
+
+    registerTokenRefreshedCallback(callback) {
+        this.onTokenRefreshedCallback = callback;
     }
 
     getToken() {
         return Cookies.get("access_token");
     }
 
-    setToken(token, ttl = 3600) { // default 1 jam
-        const expires = ttl / (24 * 60 * 60); // konversi detik ke hari (1 jam ≈ 0.0417 hari)
+    getExpiryTime() {
+        const expiry = Cookies.get("access_token_expiry");
+        return expiry ? parseInt(expiry, 10) : null;
+    }
+
+    setToken(token, ttl = 900) { // Default 15 menit (900 detik)
+        const expires = ttl / (24 * 60 * 60);
         Cookies.set("access_token", token, {
             expires,
-            secure: process.env.NODE_ENV !== "production",
-            sameSite: 'strict'
+            secure: process.env.NODE_ENV === "production", // Set true di produksi
+            sameSite: 'Lax' // Menggunakan 'Lax' untuk keseimbangan keamanan dan kegunaan
+        });
+        const expiryTime = Date.now() + (ttl * 1000);
+        Cookies.set("access_token_expiry", expiryTime.toString(), {
+            expires,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: 'Lax'
         });
     }
 
     removeToken() {
         Cookies.remove("access_token");
+        Cookies.remove("access_token_expiry");
     }
 
     hasToken() {
-        return !!this.getToken();
+        const token = this.getToken();
+        const expiryTime = this.getExpiryTime();
+        if (token && expiryTime) {
+            return Date.now() < expiryTime;
+        }
+        return false;
     }
 
     processQueue(error, token = null) {
@@ -38,7 +60,6 @@ class ApiClient {
                 prom.resolve(token);
             }
         });
-
         this.failedQueue = [];
     }
 
@@ -55,8 +76,7 @@ class ApiClient {
         this.refreshPromise = this._performRefresh(currentToken);
 
         try {
-            const result = await this.refreshPromise;
-            return result;
+            return await this.refreshPromise;
         } finally {
             this.refreshPromise = null;
         }
@@ -80,39 +100,43 @@ class ApiClient {
             const newToken = result?.data?.auth?.access_token;
             const ttl = result?.data?.auth?.expires_in;
 
-            if (!newToken) {
-                throw new Error("No token in refresh response");
+            if (!newToken || !ttl) {
+                throw new Error("Invalid refresh token response");
             }
 
-            // Update token in cookie
             this.setToken(newToken, ttl);
 
-            console.log("Token refreshed successfully");
-            return newToken;
-        } catch (error) {
-            console.error("Token refresh error: ", error.message);
-            this.removeToken();
+            if (this.onTokenRefreshedCallback) {
+                this.onTokenRefreshedCallback(currentToken, newToken);
+            }
 
+            return { token: newToken, ttl: ttl };
+        } catch (error) {
+            console.error("Token refresh error:", error.message);
+            this.removeToken();
             if (typeof window !== "undefined") {
                 window.location.href = 'auth/login';
             }
-
             throw error;
         }
     }
 
-    // Make authenticated request with automatic token refresh
     async makeRequest(url, options = {}) {
-        const token = this.getToken();
+        let currentToken = this.getToken();
 
-        if (!token) {
-            throw new Error("No access token available");
+        if (!currentToken || !this.hasToken()) {
+            try {
+                const { token: refreshedToken } = await this.refreshToken();
+                currentToken = refreshedToken;
+            } catch (refreshError) {
+                throw new Error("Token refresh failed. Please log in again.");
+            }
         }
 
         const isFormData = options.body instanceof FormData;
         const headers = {
             "Accept": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${currentToken}`,
             ...(!isFormData && { "Content-Type": "application/json" }),
             ...options.headers
         };
@@ -125,32 +149,9 @@ class ApiClient {
         try {
             const response = await fetch(url, requestOptions);
 
-            // Handle 401 - token expired
             if (response.status === 401) {
-                // If we're already refreshing, queue this request
-                if (this.isRefreshing) {
-                    return new Promise((resolve, reject) => {
-                        this.failedQueue.push({ resolve, reject });
-                    }).then(newToken => {
-                        // Retry with new token
-                        return this.makeRequest(url, {
-                            ...options,
-                            headers: {
-                                ...options.headers,
-                                Authorization: `Bearer ${newToken}`
-                            }
-                        });
-                    });
-                }
-
-                // Start refresh process
-                this.isRefreshing = true;
-
                 try {
-                    const newToken = await this.refreshToken();
-                    this.processQueue(null, newToken);
-
-                    // Retry original request with new token
+                    const { token: newToken } = await this.refreshToken();
                     return this.makeRequest(url, {
                         ...options,
                         headers: {
@@ -159,17 +160,12 @@ class ApiClient {
                         }
                     });
                 } catch (refreshError) {
-                    this.processQueue(refreshError, null);
                     throw refreshError;
-                } finally {
-                    this.isRefreshing = false;
                 }
             }
 
-            // Handle other HTTP errors
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-
                 switch (response.status) {
                     case 403:
                         throw new Error("Tidak memiliki akses untuk melakukan aksi ini");
@@ -184,22 +180,19 @@ class ApiClient {
                 }
             }
 
-            // Return JSON response
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) {
                 return await response.json();
             }
             return {};
-
         } catch (error) {
-            if (error.name !== 'TypeError') { // Don't log network errors
-                console.error(`API Error for ${url}:`, error.message);
+            if (error.name !== 'TypeError') {
+                console.error("API request error:", error.message);
             }
             throw error;
         }
     }
 
-    // Clear token and redirect to login
     logout() {
         this.removeToken();
         if (typeof window !== 'undefined') {
@@ -208,7 +201,6 @@ class ApiClient {
     }
 }
 
-// Create singleton instance
 const apiClient = new ApiClient();
 
 export default apiClient;

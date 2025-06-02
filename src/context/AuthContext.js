@@ -1,45 +1,98 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import apiClient from '@/lib/apiClient';
 
 const AuthContext = createContext();
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
-const REFRESH_INTERVAL = 50 * 60 * 1000; // 50 menit dalam ms
-
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
-    const [ttl, setTtl] = useState(3600); // default 1 jam
+    const [tokenExpiryTime, setTokenExpiryTime] = useState(0);
     const [loading, setLoading] = useState(true);
     const [authLoading, setAuthLoading] = useState(false);
     const [error, setError] = useState(null);
     const router = useRouter();
 
+    const logout = useCallback(async () => {
+        setAuthLoading(true);
+        setError(null);
+        try {
+            const accessToken = apiClient.getToken();
+            if (accessToken) {
+                await fetch(`${BASE_URL}/auth/logout`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("Logout API call failed:", err.message);
+        } finally {
+            apiClient.removeToken();
+            setToken(null);
+            setUser(null);
+            setTokenExpiryTime(0);
+            setAuthLoading(false);
+            if (typeof window !== 'undefined') router.push('/auth/login?logout_success=true');
+        }
+    }, [router]);
+
+    const refreshToken = useCallback(async () => {
+        try {
+            const { token: newTokenValue, ttl: newTtlValue } = await apiClient.refreshToken();
+            setToken(newTokenValue);
+            setTokenExpiryTime(Date.now() + (newTtlValue * 1000));
+            return { token: newTokenValue, ttl: newTtlValue };
+        } catch (err) {
+            console.error("Failed to refresh token:", err.message);
+            logout(); // Force logout if refresh fails
+            throw err;
+        }
+    }, [logout]);
+
+    // Initial load and token check
     useEffect(() => {
         const savedToken = apiClient.getToken();
-        if (savedToken) {
+        const savedExpiryTime = apiClient.getExpiryTime();
+
+        if (savedToken && savedExpiryTime && Date.now() < savedExpiryTime) {
             setToken(savedToken);
+            setTokenExpiryTime(savedExpiryTime);
             fetchUser(savedToken);
         } else {
+            apiClient.removeToken();
             setLoading(false);
         }
     }, []);
 
+    // Token refresh interval logic
     useEffect(() => {
-        if (!ttl || !token) return;
+        const remainingTtl = (tokenExpiryTime - Date.now()) / 1000;
 
-        const interval = setInterval(() => {
+        if (!token || !tokenExpiryTime || remainingTtl <= 60) {
+            if (token && remainingTtl <= 0) {
+                logout(); // Logout if token is expired
+            }
+            return; // Skip setting interval
+        }
+
+        const refreshTriggerInMs = (remainingTtl - 60) * 1000;
+
+        const intervalId = setInterval(() => {
             if (apiClient.hasToken()) {
                 refreshToken();
+            } else {
+                clearInterval(intervalId); // Stop interval if no token
             }
-        }, (ttl - 600) * 1000); // 10 menit sebelum habis
+        }, refreshTriggerInMs);
 
-        return () => clearInterval(interval);
-    }, [ttl, token])
+        return () => clearInterval(intervalId); // Cleanup on unmount/dependency change
+    }, [token, tokenExpiryTime, refreshToken, logout]);
 
     const fetchUser = async (accessToken) => {
         try {
@@ -54,28 +107,23 @@ export const AuthProvider = ({ children }) => {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    const refreshed = await refreshToken().catch(() => null);
-                    if (refreshed) {
-                        return await fetchUser(refreshed); // re-fetch after token refreshed
+                    const refreshedData = await refreshToken().catch(() => null);
+                    if (refreshedData && refreshedData.token) {
+                        return await fetchUser(refreshedData.token);
                     }
-                    logout();
-                    return;
                 }
+                throw new Error(`Failed to fetch user: ${response.status}`);
             }
 
             const result = await response.json();
             if (result?.data?.user) {
                 setUser(result.data.user);
             } else {
-                throw new Error("Data user tidak ditemukan.");
+                throw new Error("User data not found.");
             }
         } catch (err) {
-            console.error("Fetch user error:", err.message);
-            if (err.message.includes("401") || err.message.includes("expired")) {
-                await refreshToken();
-            } else {
-                logout();
-            }
+            console.error("Error fetching user:", err.message);
+            logout(); // Logout on any fetch user error
         } finally {
             setLoading(false);
         }
@@ -84,74 +132,33 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         setAuthLoading(true);
         setError(null);
-
         try {
             const response = await fetch(`${BASE_URL}/auth/login`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(credentials),
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || "Silahkan periksa kembali email dan password Anda.");
+                throw new Error(errorData.message || "Please check your email and password.");
             }
 
             const result = await response.json();
-            console.log("result login:", result);
             const accessToken = result?.data?.auth?.access_token;
-            const ttl = result?.data?.auth?.expires_in;
-            if (!accessToken) throw new Error("Token tidak ditemukan.");
+            const expiresIn = result?.data?.auth?.expires_in;
+            if (!accessToken || !expiresIn) throw new Error("Token or expiry data not found.");
 
-            apiClient.setToken(accessToken, ttl);
+            apiClient.setToken(accessToken, expiresIn);
             setToken(accessToken);
-            setTtl(ttl);
+            setTokenExpiryTime(Date.now() + (expiresIn * 1000));
             await fetchUser(accessToken);
 
             return true;
         } catch (err) {
-            // console.error("Login error:", err.message);
             setError(err.message);
         } finally {
             setAuthLoading(false);
-        }
-    };
-
-    const refreshToken = useCallback(async () => {
-        try {
-            const newToken = await apiClient.refreshToken();
-            setToken(newToken);
-        } catch (err) {
-            console.error("Refresh token error:", err.message);
-            logout();
-        }
-    }, []);
-
-    const logout = async () => {
-        setAuthLoading(true);
-        setError(null);
-
-        try {
-            const accessToken = apiClient.getToken();
-            if (accessToken) {
-                await fetch(`${BASE_URL}/auth/logout`, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-            }
-        } catch (err) {
-            console.error("Logout error:", err.message);
-        } finally {
-            apiClient.removeToken();
-            setToken(null);
-            setUser(null);
-            setAuthLoading(false);
-            if (typeof window !== 'undefined') router.push('/auth/login?logout_success=true');
         }
     };
 

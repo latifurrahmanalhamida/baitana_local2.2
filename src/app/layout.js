@@ -1,7 +1,7 @@
 import { Urbanist } from "next/font/google";
 import './globals.css';
 import {AuthProvider} from "@/context/AuthContext";
-
+import {TokenRefreshAlertDialog} from "@/components/TokenRefreshAlertDialog";
 const urbanist = Urbanist({
     variable: "--font-urbanist",
     subsets: ["latin"],
@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
         <html lang="en">
         <body className={`${urbanist.variable} antialiased font-main bg-[#FAFAFA]`}>
             <AuthProvider>
+                <TokenRefreshAlertDialog />
                 {children}
             </AuthProvider>
         </body>
