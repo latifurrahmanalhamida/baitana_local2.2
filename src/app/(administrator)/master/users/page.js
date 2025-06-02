@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import useUsers from "@/hooks/useUsers";
-import {DataTable} from "@/app/master/users/data-table";
-import {createColumns} from "@/app/master/users/column";
+import {DataTable} from "@/app/(administrator)/master/users/data-table";
+import {createColumns} from "@/app/(administrator)/master/users/column";
 import {UserForm} from "@/components/users/UserForm";
 import DeleteAlert from "@/components/users/DeleteAlert";
 

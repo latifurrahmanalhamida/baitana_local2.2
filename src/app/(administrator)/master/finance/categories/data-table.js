@@ -47,8 +47,9 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
         globalFilterFn: (row, columnId, filterValue) => { // filter
             const search = filterValue.toLowerCase().trim();
             return (
-                row.original.role_code?.toLowerCase().includes(search) ||
+                row.original.finance_category_code?.toLowerCase().includes(search) ||
                 row.original.name?.toLowerCase().includes(search) ||
+                row.original.type?.toLowerCase().includes(search) ||
                 row.original.created_at?.toLowerCase().includes(search) ||
                 row.original.created_at_human?.toLowerCase().includes(search)
             )
@@ -62,7 +63,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
         },
         initialState: {
             pagination: {
-                pageSize: 5,
+                pageSize: 10,
             },
         },
     })
@@ -75,7 +76,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Cari role..."
+                                placeholder="Cari kategori keuangan..."
                                 value={searchQuery}
                                 onChange={(event) => onSearchChange(event.target.value)}
                                 className="pl-9 h-10 border-gray-300 focus:border-[#2C3E9E] focus:ring-[#2C3E9E]"
@@ -90,7 +91,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                                     Column
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuContent align="end" className="w-fit">
                                 {table
                                     .getAllColumns()
                                     .filter((column) => column.getCanHide())
@@ -102,13 +103,15 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                                                 checked={column.getIsVisible()}
                                                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
                                             >
-                                                {column.id === "role_code"
-                                                    ? "Kode Role"
+                                                {column.id === "finance_category_code"
+                                                    ? "Kode Kategori Keuangan"
                                                     : column.id === "name"
-                                                        ? "Nama Role"
-                                                        : column.id === "created_at"
-                                                            ? "Tanggal Dibuat"
-                                                            : column.id}
+                                                        ? "Nama Kategori Keuangan"
+                                                        : column.id === "type"
+                                                            ? "Tipe"
+                                                            : column.id === "created_at"
+                                                                ? "Tanggal Dibuat"
+                                                                : column.id}
                                             </DropdownMenuCheckboxItem>
                                         )
                                     })}
@@ -118,7 +121,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                     <div className="flex items-center gap-2">
                         <Button onClick={onAddNew} className="bg-[#2C3E9E] hover:bg-[#243280] h-10 px-4 font-medium">
                             <Plus className="h-4 w-4" />
-                            Tambah Role
+                            Tambah Kategori Keuangan
                         </Button>
                     </div>
                 </div>
@@ -145,7 +148,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                         <TableBody>
                             {isLoading ? (
                                 // Loading skeleton
-                                Array.from({ length: 5 }).map((_, index) => (
+                                Array.from({ length: 6 }).map((_, index) => (
                                     <TableRow key={index} className="hover:bg-gray-50/50">
                                         {columns.map((_, cellIndex) => (
                                             <TableCell key={cellIndex} className="h-16 px-4">

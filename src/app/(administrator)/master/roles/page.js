@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 import useRoles from "@/hooks/useRoles"
-import {DataTable} from "@/app/master/roles/data-table";
-import {createColumns} from "@/app/master/roles/column";
+import {DataTable} from "@/app/(administrator)/master/roles/data-table";
+import {createColumns} from "@/app/(administrator)/master/roles/column";
 import { RoleForm } from "@/components/roles/RoleForm"
 import { DeleteAlert } from "@/components/roles/DeleteAlert"
 
