@@ -166,7 +166,7 @@ const data = {
 export function AppSidebar({
   ...props
 }) {
-  // const { user } = useAuth();
+  const { user, authLoading } = useAuth();
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -192,7 +192,13 @@ export function AppSidebar({
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {!authLoading && user ? (
+            <NavUser user={user} />
+        ) : (
+            <div className="h-16 flex items-center justify-center text-muted-foreground">
+              Loading user...
+            </div>
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

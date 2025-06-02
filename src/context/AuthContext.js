@@ -3,31 +3,43 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
+import apiClient from '@/lib/apiClient';
 
 const AuthContext = createContext();
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 menit
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
+const REFRESH_INTERVAL = 50 * 60 * 1000; // 50 menit dalam ms
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
+    const [ttl, setTtl] = useState(3600); // default 1 jam
     const [loading, setLoading] = useState(true);
     const [authLoading, setAuthLoading] = useState(false);
     const [error, setError] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
-        const savedToken = Cookies.get("access_token");
+        const savedToken = apiClient.getToken();
         if (savedToken) {
             setToken(savedToken);
             fetchUser(savedToken);
         } else {
             setLoading(false);
         }
-
-        const interval = setInterval(refreshToken, REFRESH_INTERVAL);
-        return () => clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        if (!ttl || !token) return;
+
+        const interval = setInterval(() => {
+            if (apiClient.hasToken()) {
+                refreshToken();
+            }
+        }, (ttl - 600) * 1000); // 10 menit sebelum habis
+
+        return () => clearInterval(interval);
+    }, [ttl, token])
 
     const fetchUser = async (accessToken) => {
         try {
@@ -40,17 +52,30 @@ export const AuthProvider = ({ children }) => {
                 }
             });
 
-            if (!response.ok) throw new Error("Gagal mengambil data user.");
+            if (!response.ok) {
+                if (response.status === 401) {
+                    const refreshed = await refreshToken().catch(() => null);
+                    if (refreshed) {
+                        return await fetchUser(refreshed); // re-fetch after token refreshed
+                    }
+                    logout();
+                    return;
+                }
+            }
 
             const result = await response.json();
-            if (result?.data) {
-                setUser(result.data);
+            if (result?.data?.user) {
+                setUser(result.data.user);
             } else {
                 throw new Error("Data user tidak ditemukan.");
             }
         } catch (err) {
             console.error("Fetch user error:", err.message);
-            logout();
+            if (err.message.includes("401") || err.message.includes("expired")) {
+                await refreshToken();
+            } else {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
@@ -69,17 +94,25 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify(credentials),
             });
 
-            if (!response.ok) throw new Error("Silahkan periksa kembali email dan password Anda.");
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || "Silahkan periksa kembali email dan password Anda.");
+            }
 
             const result = await response.json();
-            const accessToken = result?.data?.access_token;
+            console.log("result login:", result);
+            const accessToken = result?.data?.auth?.access_token;
+            const ttl = result?.data?.auth?.expires_in;
             if (!accessToken) throw new Error("Token tidak ditemukan.");
 
-            Cookies.set("access_token", accessToken);
+            apiClient.setToken(accessToken, ttl);
             setToken(accessToken);
+            setTtl(ttl);
             await fetchUser(accessToken);
+
+            return true;
         } catch (err) {
-            console.error("Login error:", err.message);
+            // console.error("Login error:", err.message);
             setError(err.message);
         } finally {
             setAuthLoading(false);
@@ -87,27 +120,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     const refreshToken = useCallback(async () => {
-        const currentToken = Cookies.get("access_token");
-        if (!currentToken) return;
-
         try {
-            const response = await fetch(`${BASE_URL}/auth/refresh`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${currentToken}`,
-                    "Content-Type": "application/json"
-                }
-            });
-
-            if (!response.ok) throw new Error("Gagal refresh token.");
-
-            const result = await response.json();
-            console.log(result?.data);
-            const newToken = result?.data?.access_token;
-
-            if (!newToken) throw new Error("Token baru tidak ditemukan.");
-
-            Cookies.set("access_token", newToken);
+            const newToken = await apiClient.refreshToken();
             setToken(newToken);
         } catch (err) {
             console.error("Refresh token error:", err.message);
@@ -120,7 +134,7 @@ export const AuthProvider = ({ children }) => {
         setError(null);
 
         try {
-            const accessToken = Cookies.get("access_token");
+            const accessToken = apiClient.getToken();
             if (accessToken) {
                 await fetch(`${BASE_URL}/auth/logout`, {
                     method: "POST",
@@ -133,11 +147,11 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             console.error("Logout error:", err.message);
         } finally {
-            Cookies.remove("access_token");
+            apiClient.removeToken();
             setToken(null);
             setUser(null);
             setAuthLoading(false);
-            router.push("/auth/login");
+            if (typeof window !== 'undefined') router.push('/auth/login?logout_success=true');
         }
     };
 
@@ -151,6 +165,7 @@ export const AuthProvider = ({ children }) => {
                 error,
                 login,
                 logout,
+                refreshToken,
             }}
         >
             {children}

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,7 +16,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {useState} from "react";
+import { Eye, EyeOff } from "lucide-react"; // Import ikon mata
+import {useState, useEffect} from "react";
 
 const loginSchema = z.object({
   email: z.string().trim().min(1, {message: "Email tidak boleh kosong."}).email({ message: "Email tidak valid" }),
@@ -24,9 +25,16 @@ const loginSchema = z.object({
 });
 
 export function LoginForm({ className, ...props }) {
-  // const { login, authLoading, error } = useAuth();
+  const { login, authLoading, error } = useAuth();
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [logoutSuccessDialogOpen, setLogoutSuccessDialogOpen] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const {
     register,
@@ -37,21 +45,30 @@ export function LoginForm({ className, ...props }) {
   });
 
   const submit = async (data) => {
-
     const success = await login(data);
 
-    if (!success) {
+    if (success) {
+      router.push("/dashboard");
+    } else {
       setErrorDialogOpen(true);
     }
-
-    router.push("/dashboard");
   };
+
+  // Efek untuk memeriksa query parameter 'logout_success' saat komponen dimuat
+  useEffect(() => {
+    if (searchParams.get('logout_success') === 'true') {
+      setLogoutSuccessDialogOpen(true);
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('logout_success');
+      router.replace(newUrl.pathname + newUrl.search);
+    }
+  }, [searchParams, router]);
 
   return (
       <div className={cn("flex flex-col gap-6", className)} {...props}>
         <Card className="overflow-hidden p-0">
           <CardContent className="grid p-0 md:grid-cols-2">
-            <form className="p-6 md:p-8" onSubmit={handleSubmit(submit)}>
+            <form className="p-6 md:py-16 md:px-8" onSubmit={handleSubmit(submit)}>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-2xl font-bold">{props.title}</h1>
@@ -60,30 +77,48 @@ export function LoginForm({ className, ...props }) {
                   </p>
                 </div>
 
-                {/*{error && (*/}
-                {/*    <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>*/}
-                {/*      <AlertDialogContent>*/}
-                {/*        <AlertDialogHeader>*/}
-                {/*          <AlertDialogTitle className={"text-center text-red-500"}>Gagal Login!</AlertDialogTitle>*/}
-                {/*          <AlertDialogDescription className={"text-center"}>*/}
-                {/*            {error}*/}
-                {/*          </AlertDialogDescription>*/}
-                {/*        </AlertDialogHeader>*/}
-                {/*        <AlertDialogFooter>*/}
-                {/*          <AlertDialogAction className={"mx-auto "} onClick={() => setErrorDialogOpen(false)}>*/}
-                {/*            OK*/}
-                {/*          </AlertDialogAction>*/}
-                {/*        </AlertDialogFooter>*/}
-                {/*      </AlertDialogContent>*/}
-                {/*    </AlertDialog>*/}
-                {/*)}*/}
+                {error && (
+                    <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className={"text-center text-red-500"}>Gagal Login!</AlertDialogTitle>
+                          <AlertDialogDescription className={"text-center"}>
+                            {error}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogAction className={"mx-auto "} onClick={() => setErrorDialogOpen(false)}>
+                            OK
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                )}
+
+                {logoutSuccessDialogOpen && (
+                    <AlertDialog open={logoutSuccessDialogOpen} onOpenChange={setLogoutSuccessDialogOpen}>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className={"text-center text-green-500"}>Berhasil Logout!</AlertDialogTitle>
+                          <AlertDialogDescription className={"text-center"}>
+                            Anda telah berhasil keluar dari akun Anda.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogAction className={"mx-auto "} onClick={() => setLogoutSuccessDialogOpen(false)}>
+                            OK
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                )}
 
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" placeholder="email@example.com" {...register("email")} />
-                  {/*{errors.email && (*/}
-                  {/*    <p className="text-xs text-red-500">{errors.email.message}</p>*/}
-                  {/*)}*/}
+                  {errors.email && (
+                      <p className="text-xs text-red-500">{errors.email.message}</p>
+                  )}
                 </div>
 
                 <div className="grid gap-3">
@@ -93,15 +128,32 @@ export function LoginForm({ className, ...props }) {
                       Lupa password?
                     </a>
                   </div>
-                  <Input id="password" type="password" placeholder={"password"} {...register("password")} />
-                  {/*{errors.password && (*/}
-                  {/*    <p className="text-xs text-red-500">{errors.password.message}</p>*/}
-                  {/*)}*/}
+                  <div className="relative">
+                    <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder={"password"}
+                        {...register("password")}
+                        className="pr-10"
+                    />
+                    <button
+                        type="button"
+                        onClick={togglePasswordVisibility}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                      ) : (
+                          <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
-                {/*<Button type="submit" className="w-full" disabled={authLoading}>*/}
-                <Button type="submit" className="w-full">
-                  {/*{authLoading ? "Loading..." : "Login"}*/} Login
+                <Button type="submit" className="w-full" disabled={authLoading}>
+                {/*<Button type="submit" className="w-full">*/}
+                  {authLoading ? "Loading..." : "Login"}
                 </Button>
 
                 <div className="text-center text-sm">
