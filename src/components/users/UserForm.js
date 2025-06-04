@@ -15,7 +15,9 @@ import { ModalForm } from "@/components/ModalForm";
 import { showMultipleErrorToasts } from "@/utlis/toast-error-handle";
 import { toast } from "sonner"
 
-const API_URL = "http://localhost:8000"
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : "http://localhost:8000/";
 
 export function UserForm({
    isModalOpen,
@@ -52,7 +54,7 @@ export function UserForm({
 
             // Set preview untuk foto existing
             if (selectedUser?.photo) {
-                setPreviewUrl(`${API_URL}/storage/${selectedUser.photo}`)
+                setPreviewUrl(`${BASE_URL}${selectedUser.photo}`)
             } else {
                 setPreviewUrl(null)
             }
@@ -95,7 +97,7 @@ export function UserForm({
     const removeFile = () => {
         setSelectedFile(null)
         if (isEditMode && selectedUser?.photo) {
-            setPreviewUrl(`${API_URL}/storage/${selectedUser.photo}`)
+            setPreviewUrl(`${BASE_URL}${selectedUser.photo}`)
         } else {
             setPreviewUrl(null)
         }

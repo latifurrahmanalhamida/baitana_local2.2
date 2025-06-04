@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowUpDown, Pencil, Trash2, Mail, User } from "lucide-react"
 
-const API_URL = "http://localhost:8000"
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : "http://localhost:8000/";
 
 export const createColumns = (openEditModal, openDeleteAlert) => [
     {
@@ -25,7 +27,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
         header: () => <div className="text-center font-semibold">Foto</div>,
         cell: ({ row }) => {
             const user = row.original
-            const photoUrl = user.photo ? `${API_URL}/storage/${user.photo}` : null
+            const photoUrl = user.photo ? `${BASE_URL}${user.photo}` : null
 
             return (
                 <div className="flex justify-center">
