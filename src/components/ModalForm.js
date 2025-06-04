@@ -21,6 +21,7 @@ export function ModalForm({
     isLoading,
     submitLabel = "Simpan",
     size = "sm",
+    hideSubmitButton = false,
 }) {
     const sizeClass = {
         sm: "sm:max-w-[425px]",
@@ -42,24 +43,31 @@ export function ModalForm({
                     </DialogDescription>
                 )}
 
-                <form onSubmit={onSubmit} className="space-y-4 pt-2">
-                    {children}
+                {hideSubmitButton ? (
+                    <div className="space-y-4 pt-2"> {/* Jika tombol submit disembunyikan, tidak perlu <form> */}
+                        {children}
+                    </div>
+                ) : (
+                    <form onSubmit={onSubmit} className="space-y-4 pt-2">
+                        {children}
 
-                    <DialogFooter>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => onClose(false)}
-                            disabled={isLoading}
-                        >
-                            Batal
-                        </Button>
-                        <Button type="submit" disabled={isLoading} className="bg-[#2C3E9E] hover:bg-[#243280]">
-                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {submitLabel}
-                        </Button>
-                    </DialogFooter>
-                </form>
+                        {/* DialogFooter hanya ditampilkan jika hideSubmitButton adalah false */}
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => onClose(false)}
+                                disabled={isLoading}
+                            >
+                                Batal
+                            </Button>
+                            <Button type="submit" disabled={isLoading} className="bg-[#2C3E9E] hover:bg-[#243280]">
+                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {submitLabel}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                )}
             </DialogContent>
         </Dialog>
     );

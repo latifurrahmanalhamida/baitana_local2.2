@@ -63,8 +63,11 @@ export function LoginForm({ className, ...props }) {
     let messageToDisplay = "";
     let shouldOpenDialog = false;
 
-    if (logoutReason === 'forbidden') {
+    if (logoutReason === 'access_denied') {
       messageToDisplay = "Akses ditolak. Anda telah dikeluarkan dari sesi karena tidak memiliki izin.";
+      shouldOpenDialog = true;
+    } else if (logoutReason === 'refresh_failed' || logoutReason === 'initial_token_refresh_failed' || logoutReason === 'no_token_for_refresh' || logoutReason === 'invalid_refresh_response' || logoutReason === 'network_or_unexpected_refresh_error') {
+      messageToDisplay = "Sesi Anda telah berakhir karena masalah otentikasi. Silakan masuk kembali.";
       shouldOpenDialog = true;
     } else if (logoutSuccess === 'true') {
       messageToDisplay = "Anda telah berhasil keluar dari akun Anda.";

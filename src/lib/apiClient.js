@@ -70,7 +70,8 @@ class ApiClient {
 
         const currentToken = this.getToken();
         if (!currentToken) {
-            throw new Error("No token available for refresh");
+            this.logout('no_token_for_refresh');
+            throw new Error("No token available for refresh. Logging out.");
         }
 
         this.refreshPromise = this._performRefresh(currentToken);
@@ -93,6 +94,7 @@ class ApiClient {
             });
 
             if (!response.ok) {
+                this.logout('refresh_failed'); // Panggil logout di sini!
                 throw new Error(`Refresh failed: ${response.status}`);
             }
 
@@ -101,6 +103,7 @@ class ApiClient {
             const ttl = result?.data?.auth?.expires_in;
 
             if (!newToken || !ttl) {
+                this.logout('invalid_refresh_response');
                 throw new Error("Invalid refresh token response");
             }
 
@@ -113,9 +116,8 @@ class ApiClient {
             return { token: newToken, ttl: ttl };
         } catch (error) {
             console.error("Token refresh error:", error.message);
-            this.removeToken();
-            if (typeof window !== "undefined") {
-                window.location.href = 'auth/login';
+            if (!this.refreshPromise) {
+                this.logout('network_or_unexpected_refresh_error');
             }
             throw error;
         }
@@ -129,6 +131,7 @@ class ApiClient {
                 const { token: refreshedToken } = await this.refreshToken();
                 currentToken = refreshedToken;
             } catch (refreshError) {
+                this.logout('initial_token_refresh_failed');
                 throw new Error("Token refresh failed. Please log in again.");
             }
         }
@@ -150,7 +153,7 @@ class ApiClient {
             const response = await fetch(url, requestOptions);
 
             if (response.status === 403) {
-                this.logout();
+                this.logout('access_denied');
                 throw new Error("Akses dilarang. Anda telah dikeluarkan dari sesi.");
             }
 
@@ -196,10 +199,10 @@ class ApiClient {
         }
     }
 
-    logout() {
+    logout(reason = "access_denied") {
         this.removeToken();
         if (typeof window !== 'undefined') {
-            window.location.replace('/auth/login?logout=forbidden');
+            window.location.replace(`/auth/login?logout=${reason}`);
         }
     }
 }
