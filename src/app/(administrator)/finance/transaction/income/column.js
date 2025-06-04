@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {ArrowUpDown, Calendar, Eye, Mail, Pencil, Trash2} from "lucide-react"
+import {ArrowUpDown, Calendar, Eye, FileX, Pencil, Trash2} from "lucide-react"
 
 export const createColumns = (openEditModal, openDeleteAlert, openPreviewReceiptModal) => [
     {
@@ -67,8 +67,13 @@ export const createColumns = (openEditModal, openDeleteAlert, openPreviewReceipt
             const financeIncome = row.original
             return (
                 <div className="flex justify-center">
-                    <Badge variant="outline" className="bg-green-50 text-green-700 text-xs border-green-200 font-medium px-3 py-1">
-                        {financeIncome.finance_category.name || "No Finance Category"}
+                    <Badge variant="outline" className="flex flex-col items-center justify-center bg-green-50 text-green-700 text-xs border-green-200 font-medium px-3 py-1">
+                        <span>
+                            {financeIncome?.finance_category?.name ?? "No Finance Category"}
+                        </span>
+                        <span className="text-[10px] text-blue-700">
+                            ({financeIncome?.finance_category?.type ?? "No Finance Category"})
+                        </span>
                     </Badge>
                 </div>
             )
@@ -123,7 +128,10 @@ export const createColumns = (openEditModal, openDeleteAlert, openPreviewReceipt
                     </div>
                 )
             }
-            return <span className="text-muted-foreground text-xs">Tidak ada</span>;
+            return <div className="flex flex-col justify-center items-center text-muted-foreground space-y-1">
+                <FileX className="w-4 h-4" />
+                <span className="text-xs text-center">Tidak ada</span>
+            </div>;
         },
         size: 100,
     },

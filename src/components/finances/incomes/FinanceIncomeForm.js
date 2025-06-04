@@ -19,8 +19,11 @@ import { id } from "date-fns/locale"
 import { ModalForm } from "@/components/ModalForm"
 import { toast } from "sonner"
 import { showMultipleErrorToasts } from "@/utlis/toast-error-handle"
+import {Badge} from "@/components/ui/badge";
 
-const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : "http://localhost:8000/";
 
 const getFileTypeFromUrl = (urlOrName) => {
     if (!urlOrName || typeof urlOrName !== 'string') {
@@ -84,7 +87,7 @@ export function FinanceIncomeForm({
             })
 
             if (selectedFinanceIncome?.transaction_receipt) {
-                setPreviewUrl(`${STORAGE_URL}/${selectedFinanceIncome.transaction_receipt}`)
+                setPreviewUrl(`${BASE_URL}${selectedFinanceIncome.transaction_receipt}`)
             } else {
                 setPreviewUrl(null)
             }
@@ -145,7 +148,7 @@ export function FinanceIncomeForm({
     const removeFile = () => {
         setSelectedFile(null)
         if (isEditMode && selectedFinanceIncome?.transaction_receipt) {
-            setPreviewUrl(`${STORAGE_URL}/${selectedFinanceIncome.transaction_receipt}`)
+            setPreviewUrl(`${BASE_URL}${selectedFinanceIncome.transaction_receipt}`)
         } else {
             setPreviewUrl(null)
         }
@@ -163,7 +166,7 @@ export function FinanceIncomeForm({
     const onSubmit = async (values) => {
         try {
             const formData = new FormData()
-            formData.append("date", format(values.date, "yyyy-MM-dd") || "")
+            formData.append("date", format(values.date, "dd-MM-yyyy") || "")
             formData.append("finance_category_id", values.finance_category_id || "")
             formData.append("description", values.description || "")
             formData.append("amount", values.amount || "")
@@ -205,7 +208,7 @@ export function FinanceIncomeForm({
     const renderTransactionReceiptPreview = () => {
         const fileToPreview = selectedFile || selectedFinanceIncome;
 
-        const currentPreviewUrl = selectedFile ? previewUrl : (selectedFinanceIncome?.transaction_receipt ? `${STORAGE_URL}/${selectedFinanceIncome.transaction_receipt}` : null);
+        const currentPreviewUrl = selectedFile ? previewUrl : (selectedFinanceIncome?.transaction_receipt ? `${BASE_URL}${selectedFinanceIncome.transaction_receipt}` : null);
 
         if (!fileToPreview || !currentPreviewUrl) {
             return null;
@@ -326,6 +329,17 @@ export function FinanceIncomeForm({
                                                     <div className="flex items-center space-x-2">
                                                         <span className="font-medium">{financeCategory.name}</span>
                                                         <span className="text-xs text-muted-foreground">({financeCategory.finance_category_code})</span>
+                                                        <Badge
+                                                            variant="outline"
+                                                            className={`text-xs px-1 
+                                                                ${financeCategory.type === 'Expense'
+                                                                    ? 'bg-orange-50 text-orange-700 border-orange-300'
+                                                                    : 'bg-blue-50 text-[#2C3E9E] border-[#2C3E9E]/30'
+                                                                }`
+                                                            }
+                                                        >
+                                                            {financeCategory.type}
+                                                        </Badge>
                                                     </div>
                                                 </SelectItem>
                                             ))}

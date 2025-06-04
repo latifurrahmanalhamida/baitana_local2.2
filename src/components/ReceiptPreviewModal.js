@@ -3,7 +3,9 @@ import Image from "next/image";
 import {FileIcon} from "lucide-react";
 import {useEffect} from "react";
 
-const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : "http://localhost:8000/";
 
 export function ReceiptPreviewModal({ isOpen, onClose, receiptPath }) {
     if (!isOpen || !receiptPath) {
@@ -14,7 +16,7 @@ export function ReceiptPreviewModal({ isOpen, onClose, receiptPath }) {
     const fileName = receiptPath.split("/").pop();
     const fileExtension = fileName.split(".").pop()?.toLowerCase();
 
-    const fullUrl = `${STORAGE_URL}/${receiptPath}`;
+    const fullUrl = `${BASE_URL}${receiptPath}`;
 
     return (
         <ModalForm
