@@ -3,28 +3,92 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation";
+
 import { Menu, X } from 'lucide-react'
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [activeLink, setActiveLink] = useState("/")
+    const pathname = usePathname()
+    const [currentHash, setCurrentHash] = useState('')
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            setActiveLink(window.location.pathname)
-        }
-    }, [])
+    const safePathname = pathname === '/' ? '/' : pathname.replace(/\/$/, '')
 
     const menuLinks = [
         { href: '/', label: 'Beranda' },
         { href: '/about', label: 'Sejarah' },
-        { href: '#events', label: 'Kegiatan' },
-        { href: '#facilities', label: 'Fasilitas' },
-        { href: '/berita', label: 'Berita' },
+        { href: '/#events', label: 'Kegiatan' },
+        { href: '/#facilities', label: 'Fasilitas' },
+        { href: '/news', label: 'Berita' },
     ];
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setCurrentHash(window.location.hash || '')
+        }
+    }, [pathname])  // <- dependensi pathname
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setCurrentHash(window.location.hash);
+
+            const onHashChange = () => setCurrentHash(window.location.hash);
+            window.addEventListener('hashchange', onHashChange);
+            window.addEventListener('popstate', onHashChange);
+
+            return () => {
+                window.removeEventListener('hashchange', onHashChange);
+                window.removeEventListener('popstate', onHashChange);
+            };
+        }
+    }, []);
+
+    const handleAnchorClick = (e, href) => {
+        if (href.includes('#')) {
+            const [path, hash] = href.split('#')
+            if (window.location.pathname === path) {
+                e.preventDefault()
+                // scroll ke elemen
+                const el = document.getElementById(hash)
+                if (el) el.scrollIntoView({ behavior: 'smooth' })
+                // update state currentHash manual
+                setCurrentHash(`#${hash}`)
+                // update URL tanpa reload
+                window.history.pushState(null, '', href)
+            }
+        } else {
+            // Jika link tidak mengandung hash (seperti klik "Beranda")
+            // dan kita sedang di halaman yang sama, reset hash
+            if (href === '/' && window.location.pathname === '/') {
+                e.preventDefault()
+                setCurrentHash('')
+                window.history.pushState(null, '', '/')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+        }
+    }
+
+    function isActiveLink(linkHref) {
+        const normalizedLinkHref = linkHref === '/' ? '/' : linkHref.replace(/\/$/, '')
+
+        if (linkHref.includes('#')) {
+            const [linkPath, linkHash] = linkHref.split('#')
+            return safePathname === linkPath && currentHash === `#${linkHash}`
+        }
+
+        if (normalizedLinkHref === '/') {
+            if (!currentHash) return safePathname === '/'
+            const allHashes = menuLinks
+                .filter(link => link.href.includes('#'))
+                .map(link => `#${link.href.split('#')[1]}`);
+            return safePathname === '/' && !allHashes.includes(currentHash);
+        }
+
+        return safePathname === normalizedLinkHref
+    }
+
     return (
-        <header className="font-main border-b border-gray-200 bg-[#FAFAFA] backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-gray-700 dark:bg-gray-900/95 dark:supports-[backdrop-filter]:bg-gray-900/60">
+        <header className="sticky top-0 z-50 font-main border-b border-gray-200 bg-[#FAFAFA] backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-gray-700 dark:bg-gray-900/95 dark:supports-[backdrop-filter]:bg-gray-900/60">
             <div className="mx-auto">
                 <div className="flex h-[80px] justify-between px-6 lg:px-[86px]">
                     {/* Logo */}
@@ -44,12 +108,12 @@ export default function Navbar() {
                         <nav className="hidden md:flex items-center space-x-6 h-full">
                             {menuLinks.map((link, index) => (
                                 <div key={index} className="h-full flex items-center relative group px-3">
-                                    <Link key={index} href={link.href} className="relative text-[16px] font-normal text-gray-700 hover:text-[#2C3E9E] hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:text-blue-500 px-2">
+                                    <Link key={index} href={link.href} onClick={(e) => handleAnchorClick(e, link.href)} className="relative text-[16px] font-normal text-gray-700 hover:text-[#2C3E9E] hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:text-blue-500 px-2">
                                        <span className="relative z-10">{link.label}</span>
                                     </Link>
                                     {/* Underline at the bottom border of navbar */}
                                     <span
-                                        className={`absolute bottom-[-1px] left-0 h-1 rounded-3xl bg-[#2C3E9E] transition-all duration-300 ${activeLink === link.href ? "w-full" : "group-hover:w-0"}`}
+                                        className={`absolute bottom-[-1px] left-0 h-1 rounded-3xl transition-all duration-300 bg-[#2C3E9E]   ${isActiveLink(link.href) ? "w-full" : "group-hover:w-0"}`}
                                     ></span>
                                 </div>
                             ))}
