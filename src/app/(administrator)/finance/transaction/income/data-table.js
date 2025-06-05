@@ -78,7 +78,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Cari transaksi pemasukan keuangan"
+                                placeholder="Cari transaksi keuangan masuk..."
                                 value={searchQuery}
                                 onChange={(event) => onSearchChange(event.target.value)}
                                 className="pl-9 h-10 border-gray-300 focus:border-[#2C3E9E] focus:ring-[#2C3E9E]"
@@ -129,7 +129,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                     <div className="flex items-center gap-2">
                         <Button onClick={onAddNew} className="bg-[#2C3E9E] hover:bg-[#243280] h-10 px-4 font-medium">
                             <Plus className="h-4 w-4" />
-                            Tambah Transaksi Pemasukan
+                            Tambah Pemasukan Keuangan
                         </Button>
                     </div>
                 </div>
@@ -185,7 +185,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                                         <div className="flex flex-col items-center justify-center space-y-2">
                                             <div className="text-muted-foreground">Tidak ada data transaksi keuangan masuk ditemukan</div>
                                             <div className="text-sm text-muted-foreground">
-                                                Coba ubah filter pencarian atau tambah transaksi pemasukan
+                                                Coba ubah filter pencarian atau tambah pemasukan keuangan
                                             </div>
                                         </div>
                                     </TableCell>

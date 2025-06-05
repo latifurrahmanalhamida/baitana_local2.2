@@ -225,12 +225,14 @@ export function FinanceIncomeForm({
             <div className="flex flex-col items-center gap-2 text-sm pt-2">
                 {isImage && isValidPreviewUrl && !imageLoadError ? (
                     <>
-                        <div className="h-32 w-32 relative">
+                        <div className="relative border border-gray-200 rounded-2xl overflow-hidden">
                             <Image
                                 src={currentPreviewUrl}
                                 alt={`Pratinjau ${fileName}`}
-                                layout="fill"
-                                objectFit="cover"
+                                width={0}
+                                height={0}
+                                sizes="100vw"
+                                className="h-auto w-auto max-w-full max-h-64 "
                                 onError={() => {
                                     setImageLoadError(true);
                                 }}
@@ -241,7 +243,7 @@ export function FinanceIncomeForm({
                 ) : (
                     <>
                         {isImage ? (
-                            <ImageOff className="h-20 w-20 text-gray-400" /> // Ganti jika Anda punya ikon gambar spesifik
+                            <ImageOff className="h-20 w-20 text-gray-400" />
                         ) : (
                             <FileIcon className="h-20 w-20 text-gray-400" />
                         )}
@@ -380,7 +382,7 @@ export function FinanceIncomeForm({
                     </div>
 
                     <div className="w-full md:w-1/2 flex justify-center items-center text-center border border-gray-200 rounded-lg">
-                        <div>
+                        <div className="p-4">
                             <label className="text-sm font-medium">Bukti Transaksi</label>
                             {renderTransactionReceiptPreview()}
                             <div className="flex flex-col justify-center items-center space-y-2 mt-2">

@@ -243,7 +243,7 @@ export function FinanceExpenseForm({
                 ) : (
                     <>
                         {isImage ? (
-                            <ImageOff className="h-20 w-20 text-gray-400" /> // Ganti jika Anda punya ikon gambar spesifik
+                            <ImageOff className="h-20 w-20 text-gray-400" />
                         ) : (
                             <FileIcon className="h-20 w-20 text-gray-400" />
                         )}
