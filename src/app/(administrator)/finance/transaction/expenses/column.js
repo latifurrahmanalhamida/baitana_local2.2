@@ -69,10 +69,10 @@ export const createColumns = (openEditModal, openDeleteAlert, openPreviewReceipt
                 <div className="flex justify-center">
                     <Badge variant="outline" className="flex flex-col items-center justify-center bg-green-50 text-green-700 text-xs border-green-200 font-medium px-3 py-1">
                         <span>
-                            {financeExpense?.finance_category?.name ?? "No Finance Category"}
+                            {financeExpense?.finance_category?.name_upper_first ?? "No Finance Category"}
                         </span>
                         <span className="text-[10px] text-blue-700">
-                            ({financeExpense?.finance_category?.type ?? "No Finance Category"})
+                            ({financeExpense?.finance_category?.type_upper_first ?? "No Finance Category"})
                         </span>
                     </Badge>
                 </div>

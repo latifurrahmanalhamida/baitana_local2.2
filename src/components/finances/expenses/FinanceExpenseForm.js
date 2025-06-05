@@ -328,18 +328,18 @@ export function FinanceExpenseForm({
                                             {financeCategories.map((financeCategory) => (
                                                 <SelectItem key={financeCategory.id} value={financeCategory.id.toString()}>
                                                     <div className="flex items-center space-x-2">
-                                                        <span className="font-medium">{financeCategory.name}</span>
+                                                        <span className="font-medium">{financeCategory.name_upper_first}</span>
                                                         <span className="text-xs text-muted-foreground">({financeCategory.finance_category_code})</span>
                                                         <Badge
                                                             variant="outline"
                                                             className={`text-xs px-1 
-                                                                ${financeCategory.type === 'Expense'
+                                                                ${financeCategory.type === 'expense'
                                                                 ? 'bg-orange-50 text-orange-700 border-orange-300'
                                                                 : 'bg-blue-50 text-[#2C3E9E] border-[#2C3E9E]/30'
                                                             }`
                                                             }
                                                         >
-                                                            {financeCategory.type}
+                                                            {financeCategory.type_upper_first}
                                                         </Badge>
                                                     </div>
                                                 </SelectItem>
