@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react"
 import { toast } from "sonner"
 import { getFinanceIncomes, createFinanceIncome, updateFinanceIncome, deleteFinanceIncome } from "@/lib/finance-income"
-import { getFinanceCategories } from "@/lib/finance-category";
+import {getFinanceCategories, getFinanceCategoriesByParam} from "@/lib/finance-category";
 
 export default function useFinanceIncomes() {
     const [financeIncomes, setFinanceIncomes] = useState([])
@@ -32,7 +32,7 @@ export default function useFinanceIncomes() {
     const fetchFinanceCategories = useCallback(async () => {
         setIsLoading(true)
         try {
-            const financeCategories = await getFinanceCategories();
+            const financeCategories = await getFinanceCategoriesByParam("type", "income");
             setFinanceCategories(financeCategories)
         } catch (error) {
             toast.error("Gagal memuat data finance categories")

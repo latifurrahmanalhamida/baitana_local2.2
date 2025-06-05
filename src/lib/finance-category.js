@@ -19,6 +19,23 @@ export async function getFinanceCategories(searchQuery = "") {
     }
 }
 
+export async function getFinanceCategoriesByParam(param = "type", value = "") {
+    try {
+        const query = `${encodeURIComponent(param)}=${encodeURIComponent(value)}`
+        const url = `${API_URL}/resource/finance/categories?${query}`
+
+        const result = await apiClient.makeRequest(url, {
+            method: "GET",
+        })
+
+        return result?.data?.finance_categories || []
+    } catch (error) {
+        console.error("Error getting finance categories by param:", error.message)
+        throw error
+    }
+}
+
+
 export async function createFinanceCategory(financeCategoryData) {
     try {
         return await apiClient.makeRequest(`${API_URL}/resource/finance/categories`, {
