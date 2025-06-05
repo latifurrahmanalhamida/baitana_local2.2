@@ -253,7 +253,7 @@ export function UserForm({
                                                 <SelectValue placeholder="Pilih role" />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
+                                        <SelectContent position="popper" side="bottom" avoidCollisions={false}>
                                             {roles.map((role) => (
                                                 <SelectItem key={role.id} value={role.id.toString()}>
                                                     <div className="flex items-center space-x-2">

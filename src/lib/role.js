@@ -12,9 +12,9 @@ export async function getRoles(searchQuery = "") {
             method: "GET",
         })
 
-        return result.data?.role || []
+        return result.data?.roles || []
     } catch (error) {
-        console.error("Error getting user roless:", error.message)
+        console.error("Error getting user roles:", error.message)
         throw error
     }
 }
