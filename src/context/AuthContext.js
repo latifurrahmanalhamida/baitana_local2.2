@@ -148,7 +148,6 @@ export const AuthProvider = ({ children }) => {
                 const errorData = await response.json().catch(() => ({}));
                 const error = new Error(errorData.message || "Please check your email and password.");
                 error.errors = errorData.errors;
-                console.log(errorData);
                 throw error;
             }
 

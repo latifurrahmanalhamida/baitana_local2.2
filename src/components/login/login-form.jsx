@@ -1,32 +1,40 @@
+
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { useState, useEffect, useCallback} from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { loginSchema } from "@/schemas/auth-schema";
+
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import {
   AlertDialog, AlertDialogAction,
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Eye, EyeOff } from "lucide-react"; // Import ikon mata
-import {useState, useEffect} from "react";
 
-const loginSchema = z.object({
-  email: z.string().trim().min(1, {message: "Email tidak boleh kosong."}).email({ message: "Email tidak valid" }),
-  password: z.string().min(6, { message: "Password minimal 6 karakter." }),
-});
+function toTitleCase(str) {
+  if (!str) return '';
+  return str
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+}
 
 export function LoginForm({ className, ...props }) {
   const { login, authLoading, error } = useAuth();
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [logoutMessageDialogOpen, setLogoutMessageDialogOpen] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState("");
   const router = useRouter();
@@ -41,17 +49,82 @@ export function LoginForm({ className, ...props }) {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
+    setFocus
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
 
-  const submit = async (data) => {
-    const success = await login(data);
+  const handleDisplayError = useCallback((currentError) => {
+    if (!currentError) return; // Pastikan ada error object
 
-    if (success) {
-      router.push("/dashboard");
-    } else {
+    let messageForAlertDialog = "Terjadi kesalahan. Silakan coba lagi.";
+
+    if (currentError.message) {
+      messageForAlertDialog = currentError.message;
+    }
+
+    setErrorMessage(messageForAlertDialog);
+    setErrorDialogOpen(true);
+
+    if (currentError.errors) {
+      if (typeof currentError.errors === 'object' && Object.keys(currentError.errors).length > 0) {
+        const firstErrorField = Object.keys(currentError.errors)[0];
+        if (firstErrorField) {
+          setTimeout(() => {
+            setFocus(firstErrorField);
+          }, 100);
+        }
+
+        Object.entries(currentError.errors).forEach(([field, messages]) => {
+          const messageText = Array.isArray(messages) ? messages.join(", ") : messages;
+          toast.error(`${toTitleCase(field)}: ${messageText}`, {
+            duration: 4000,
+            position: "top-right",
+            id: `error-${field}-${Date.now()}`,
+            dismissible: true
+          });
+        });
+      } else if (typeof currentError.errors === 'string') {
+        toast.error(currentError.errors, {
+          duration: 4000,
+          position: "top-right",
+          id: `error-global-${Date.now()}`,
+          dismissible: true
+        });
+      }
+    }
+  }, [setErrorMessage, setErrorDialogOpen, setFocus]);
+
+  useEffect(() => {
+    if (error) {
+      handleDisplayError(error);
+    }
+  }, [error]);
+
+  const submit = async (data) => {
+    setErrorDialogOpen(false);
+    setErrorMessage("");
+    toast.dismiss();
+
+    try {
+      const success = await login(data);
+
+      if (success) {
+        reset();
+        toast.success("Login berhasil! Selamat datang.", { duration: 2000, position: "top-right" });
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      setErrorMessage(err.message || "Terjadi kesalahan jaringan atau tak terduga.");
       setErrorDialogOpen(true);
+      toast.error(err.message || "Terjadi kesalahan jaringan atau tak terduga.", {
+        duration: 4000,
+        position: "top-right",
+        id: `error-network-${Date.now()}`,
+        dismissible: true
+      });
     }
   };
 
@@ -59,6 +132,7 @@ export function LoginForm({ className, ...props }) {
   useEffect(() => {
     const logoutReason = searchParams.get("logout");
     const logoutSuccess = searchParams.get("logout_success");
+    const registerSuccess = searchParams.get("register_success");
 
     let messageToDisplay = "";
     let shouldOpenDialog = false;
@@ -72,6 +146,9 @@ export function LoginForm({ className, ...props }) {
     } else if (logoutSuccess === 'true') {
       messageToDisplay = "Anda telah berhasil keluar dari akun Anda.";
       shouldOpenDialog = true;
+    } else if (registerSuccess === 'true') {
+      messageToDisplay = "Registrasi berhasil! Silakan masuk menggunakan akun Anda.";
+      shouldOpenDialog = true;
     }
 
     if (shouldOpenDialog) {
@@ -84,6 +161,9 @@ export function LoginForm({ className, ...props }) {
       }
       if (searchParams.has('logout_success')) {
         newUrl.searchParams.delete('logout_success');
+      }
+      if (searchParams.has('register_success')) {
+        newUrl.searchParams.delete('register_success');
       }
       router.replace(newUrl.pathname + newUrl.search);
     }
@@ -108,7 +188,7 @@ export function LoginForm({ className, ...props }) {
                         <AlertDialogHeader>
                           <AlertDialogTitle className={"text-center text-red-500"}>Gagal Login!</AlertDialogTitle>
                           <AlertDialogDescription className={"text-center"}>
-                            {error}
+                            {errorMessage}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -125,7 +205,11 @@ export function LoginForm({ className, ...props }) {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle className={`text-center ${logoutMessage.includes('berhasil') ? 'text-green-500' : 'text-orange-500'}`}>
-                            {logoutMessage.includes('berhasil') ? 'Informasi Logout' : 'Sesi Berakhir'}
+                            {logoutMessage.toLowerCase().includes("registrasi")
+                                ? "Registrasi Berhasil"
+                                : logoutMessage.toLowerCase().includes("berhasil")
+                                    ? "Informasi Logout"
+                                    : "Sesi Berakhir"}
                           </AlertDialogTitle>
                           <AlertDialogDescription className={"text-center"}>
                             {logoutMessage}
@@ -155,7 +239,7 @@ export function LoginForm({ className, ...props }) {
                       Lupa password?
                     </a>
                   </div>
-                  <div className="relative">
+                  <div className="flex items-center justify-center relative">
                     <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
@@ -166,7 +250,7 @@ export function LoginForm({ className, ...props }) {
                     <button
                         type="button"
                         onClick={togglePasswordVisibility}
-                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 rounded-md"
                         aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? (
@@ -179,7 +263,6 @@ export function LoginForm({ className, ...props }) {
                 </div>
 
                 <Button type="submit" className="w-full" disabled={authLoading}>
-                {/*<Button type="submit" className="w-full">*/}
                   {authLoading ? "Loading..." : "Login"}
                 </Button>
 
@@ -193,10 +276,11 @@ export function LoginForm({ className, ...props }) {
             </form>
 
             <div className="bg-muted relative hidden md:block">
-              <img
-                  src="https://placehold.co/400x400@2x.png"
-                  alt="Image"
-                  className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              <Image
+                  src="/images/auth/login-image.png"
+                  alt="Login Image"
+                  fill
+                  className="absolute inset-0 object-cover dark:brightness-[0.2] dark:grayscale"
               />
             </div>
           </CardContent>
