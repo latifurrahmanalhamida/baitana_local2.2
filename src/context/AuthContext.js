@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import apiClient from '@/lib/apiClient';
+import { toast } from "sonner"
 
 const AuthContext = createContext();
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -145,7 +146,10 @@ export const AuthProvider = ({ children }) => {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || "Please check your email and password.");
+                const error = new Error(errorData.message || "Please check your email and password.");
+                error.errors = errorData.errors;
+                console.log(errorData);
+                throw error;
             }
 
             const result = await response.json();
@@ -160,7 +164,38 @@ export const AuthProvider = ({ children }) => {
 
             return true;
         } catch (err) {
-            setError(err.message);
+            setError(err);
+        } finally {
+            setAuthLoading(false);
+        }
+    };
+
+    const register = async (dataUser) => {
+        setAuthLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${BASE_URL}/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dataUser),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                const error = new Error(errorData.message || "Gagal melakukan registrasi. Silakan coba lagi.");
+                error.errors = errorData.errors;
+                throw error;
+            }
+
+            const result = await response.json();
+
+            toast.success(result.message)
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            return true;
+        } catch (err) {
+            setError(err);
         } finally {
             setAuthLoading(false);
         }
@@ -176,6 +211,7 @@ export const AuthProvider = ({ children }) => {
                 error,
                 login,
                 logout,
+                register,
                 refreshToken,
             }}
         >

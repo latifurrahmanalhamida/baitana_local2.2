@@ -71,13 +71,13 @@ export function NavUser({
               <Avatar className="h-10 w-10 rounded-full">
                 {/* Periksa user.photo sebelum mengakses */}
                 <AvatarImage src={user.photo ? `${API_URL}/storage/${user.photo}` : ''} alt={user.name || 'User Avatar'} />
-                <AvatarFallback className="rounded-lg font-bold border border-gray-200">
+                <AvatarFallback className="font-bold border border-gray-200">
                   {user.name // Gunakan logika inisial di sini
                       ? user.name
                           .split(" ")
                           .slice(0, 2)
                           .map((word) => word.charAt(0))
-                          .join(" ")
+                          .join("")
                           .toUpperCase()
                       : <User className="h-5 w-5" />}
                 </AvatarFallback>
@@ -105,7 +105,7 @@ export function NavUser({
                             .split(" ")
                             .slice(0, 2)
                             .map((word) => word.charAt(0))
-                            .join(" ")
+                            .join("")
                             .toUpperCase()
                         : <User className="h-4 w-4" />}
                   </AvatarFallback>

@@ -30,14 +30,14 @@ export default function AdministratorLayout({ children }) {
             <AppSidebar variant="inset" />
             <SidebarInset>
                 <SiteHeader />
-                <Toaster richColors
-                         toastOptions={{
-                             style: {
-                                 pointerEvents: 'auto',
-                                 width: 'fit-content'
-                             }
-                         }}
-                />
+                {/*<Toaster richColors*/}
+                {/*         toastOptions={{*/}
+                {/*             style: {*/}
+                {/*                 pointerEvents: 'auto',*/}
+                {/*                 width: 'fit-content'*/}
+                {/*             }*/}
+                {/*         }}*/}
+                {/*/>*/}
                 {/*<div className="flex flex-1 flex-col">*/}
                 {/*  <div className="@container/main flex flex-1 flex-col gap-2">*/}
                 <div className="md:p-6">
