@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Pagination } from "swiper/modules"
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 // Import Swiper styles
 import "swiper/css"
@@ -12,10 +13,186 @@ import "swiper/css/autoplay"
 
 export default function HeroSection() {
     const [mounted, setMounted] = useState(false)
+    const [prayerTimes, setPrayerTimes] = useState(null)
+    const [nextPrayer, setNextPrayer] = useState(null)
+    const [timeUntilNext, setTimeUntilNext] = useState("")
+    const [currentDate, setCurrentDate] = useState("")
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         setMounted(true)
+        setCurrentDate(formatCurrentDate())
+        fetchPrayerTimes()
     }, [])
+
+    useEffect(() => {
+        if (prayerTimes) {
+            const interval = setInterval(() => {
+                calculateNextPrayer();
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [prayerTimes]);
+
+    const formatCurrentDate = () => {
+        const today = new Date()
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ]
+
+        const dayName = days[today.getDay()]
+        const day = today.getDate()
+        const month = months[today.getMonth()]
+        const year = today.getFullYear()
+
+        return `${dayName}, ${day} ${month} ${year}`
+    }
+
+    const fetchPrayerTimes = async () => {
+        try {
+            setLoading(true)
+            const today = new Date()
+            const year = today.getFullYear()
+            const month = String(today.getMonth() + 1).padStart(2, '0')
+            const day = String(today.getDate()).padStart(2, '0')
+
+            // 1634 adalah kode untuk Kota Malang
+            const response = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1634/${year}/${month}/${day}`)
+            const data = await response.json()
+
+            if (data.status && data.data) {
+                setPrayerTimes(data.data.jadwal)
+            }
+        } catch (error) {
+            console.error('Error fetching prayer times:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const calculateNextPrayer = () => {
+        if (!prayerTimes) return
+
+        const now = new Date()
+        const currentTime = now.getHours() * 60 + now.getMinutes()
+
+        const prayers = [
+            { name: 'Subuh', time: prayerTimes.subuh, displayName: 'Shalat Subuh' },
+            { name: 'Dzuhur', time: prayerTimes.dzuhur, displayName: 'Shalat Dzuhur' },
+            { name: 'Ashar', time: prayerTimes.ashar, displayName: 'Shalat Ashar' },
+            { name: 'Maghrib', time: prayerTimes.maghrib, displayName: 'Shalat Maghrib' },
+            { name: 'Isya', time: prayerTimes.isya, displayName: 'Shalat Isya' }
+        ]
+
+        // Konversi waktu sholat ke menit
+        const prayerMinutes = prayers.map(prayer => {
+            const [hours, minutes] = prayer.time.split(':').map(Number)
+            return {
+                ...prayer,
+                minutes: hours * 60 + minutes
+            }
+        })
+
+        // Cari sholat selanjutnya
+        let nextPrayerData = null
+        for (const prayer of prayerMinutes) {
+            if (prayer.minutes > currentTime) {
+                nextPrayerData = prayer
+                break
+            }
+        }
+
+        // Jika tidak ada sholat hari ini, maka sholat selanjutnya adalah Subuh besok
+        if (!nextPrayerData) {
+            nextPrayerData = prayerMinutes[0] // Subuh
+            nextPrayerData.minutes += 24 * 60 // Tambah 24 jam
+        }
+
+        setNextPrayer(nextPrayerData)
+
+        // Hitung waktu tersisa
+        const timeDiff = nextPrayerData.minutes - currentTime
+        const hours = Math.floor(timeDiff / 60)
+        const minutes = timeDiff % 60
+
+        if (hours > 0) {
+            setTimeUntilNext(`${String(hours).padStart(2, '0')} jam : ${String(minutes).padStart(2, '0')} menit`)
+        } else {
+            setTimeUntilNext(`${String(minutes).padStart(2, '0')} menit`)
+        }
+    }
+
+    // Dengan Detik
+    // const calculateNextPrayer = () => {
+    //     if (!prayerTimes) return
+    //
+    //     const now = new Date()
+    //     const currentTime = now.getHours() * 60 + now.getMinutes()
+    //     const currentTimeInSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()
+    //
+    //     const prayers = [
+    //         { name: 'Subuh', time: prayerTimes.subuh, displayName: 'Shalat Subuh' },
+    //         { name: 'Dzuhur', time: prayerTimes.dzuhur, displayName: 'Shalat Dzuhur' },
+    //         { name: 'Ashar', time: prayerTimes.ashar, displayName: 'Shalat Ashar' },
+    //         { name: 'Maghrib', time: prayerTimes.maghrib, displayName: 'Shalat Maghrib' },
+    //         { name: 'Isya', time: prayerTimes.isya, displayName: 'Shalat Isya' }
+    //     ]
+    //
+    //     // Konversi waktu sholat ke menit
+    //     const prayerMinutes = prayers.map(prayer => {
+    //         const [hours, minutes] = prayer.time.split(':').map(Number)
+    //         return {
+    //             ...prayer,
+    //             minutes: hours * 60 + minutes
+    //         }
+    //     })
+    //
+    //     // Cari sholat selanjutnya
+    //     let nextPrayerData = null
+    //     for (const prayer of prayerMinutes) {
+    //         if (prayer.minutes > currentTime) {
+    //             nextPrayerData = prayer
+    //             break
+    //         }
+    //     }
+    //
+    //     // Jika tidak ada sholat hari ini, maka sholat selanjutnya adalah Subuh besok
+    //     if (!nextPrayerData) {
+    //         nextPrayerData = prayerMinutes[0] // Subuh
+    //         nextPrayerData.minutes += 24 * 60 // Tambah 24 jam
+    //     }
+    //
+    //     setNextPrayer(nextPrayerData)
+    //
+    //     // Hitung waktu tersisa dengan lebih akurat (detik)
+    //     const nextPrayerTimeInSeconds = nextPrayerData.minutes * 60
+    //
+    //     let timeDiffInSeconds = nextPrayerTimeInSeconds - currentTimeInSeconds
+    //
+    //     // Jika sholat sudah lewat hari ini, hitung untuk besok
+    //     if (timeDiffInSeconds <= 0 && nextPrayerData.name === 'Subuh') {
+    //         timeDiffInSeconds += 24 * 3600 // Tambah 24 jam dalam detik
+    //     }
+    //
+    //     const hours = Math.floor(timeDiffInSeconds / 3600)
+    //     const minutes = Math.floor((timeDiffInSeconds % 3600) / 60)
+    //     const seconds = timeDiffInSeconds % 60
+    //
+    //     if (hours > 0) {
+    //         setTimeUntilNext(`${String(hours).padStart(2, '0')} jam : ${String(minutes).padStart(2, '0')} menit : ${String(seconds).padStart(2, '0')} detik`)
+    //     } else if (minutes > 0) {
+    //         setTimeUntilNext(`${String(minutes).padStart(2, '0')} menit : ${String(seconds).padStart(2, '0')} detik`)
+    //     } else {
+    //         setTimeUntilNext(`${String(seconds).padStart(2, '0')} detik`)
+    //     }
+    // }
+
+    const formatTime = (time) => {
+        if (!time) return '--:--'
+        return `${time} WIB`
+    }
 
     const activities = [
         {
@@ -36,6 +213,30 @@ export default function HeroSection() {
         },
     ]
 
+    if (loading) {
+        return (
+            <main className="relative h-[440px] lg:h-[640px] w-full px-6 py-8 lg:px-[86px] lg:py-[64px]">
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-blue-800 opacity-90"></div>
+                    <Image
+                        src="/images/landing/hero-background.png"
+                        alt="Mosque background"
+                        fill
+                        className="object-cover object-center"
+                        priority
+                    />
+                </div>
+                <div className="relative z-10 flex items-center justify-center h-full text-white">
+                    <div className="text-center">
+                        <LoadingSpinner />
+                        {/*<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>*/}
+                        {/*<p className="text-lg">Memuat jadwal sholat...</p>*/}
+                    </div>
+                </div>
+            </main>
+        )
+    }
+
     return (
         <main className="relative h-[440px] lg:h-[640px] w-full px-6 py-8 lg:px-[86px] lg:py-[64px]">
             {/* Background Image */}
@@ -55,7 +256,9 @@ export default function HeroSection() {
                 {/* Today's Activities */}
                 <div>
                     <h2 className="mb-1 text-[18px] lg:text-[24px] font-medium">Kegiatan Hari Ini</h2>
-                    <h1 className="mb-3 lg:mb-6 text-[24px] lg:text-4xl font-bold">Minggu, 11 Mei</h1>
+                    <h1 className="mb-3 lg:mb-6 text-[24px] lg:text-4xl font-bold">
+                        {currentDate}
+                    </h1>
 
                     {/* Swiper Component */}
                     {mounted && (
@@ -89,9 +292,11 @@ export default function HeroSection() {
                     <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between">
                         <div data-aos="fade-right">
                             <h2 className="lg:mb-2 text-[16px] lg:text-[24px] font-medium">Jadwal Shalat Selanjutnya</h2>
-                            <h1 className="lg:mb-2 text-[18px] lg:text-4xl font-bold">Shalat Dzuhur</h1>
+                            <h1 className="lg:mb-2 text-[18px] lg:text-4xl font-bold">
+                                {nextPrayer?.displayName || "Memuat..."}
+                            </h1>
                             <p className="mb-2 lg:mb-0 flex items-center text-[16px] lg:text-[24px]">
-                                akan dimulai dalam <span className="mx-2 font-bold">01 jam : 19 menit</span> lagi
+                                akan dimulai dalam <span className="mx-2 font-bold">{timeUntilNext}</span> lagi
                             </p>
                         </div>
                         {/* Prayer Times */}
@@ -99,27 +304,39 @@ export default function HeroSection() {
                             <div className="grid grid-cols-3 space-x-2 space-y-1 lg:space-x-14 lg:gap-3">
                                 <div className="my-auto">
                                     <h3 className="text-sm lg:text-lg font-medium">Shalat Shubuh</h3>
-                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">04.31 WIB</p>
+                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">
+                                        {formatTime(prayerTimes?.subuh)}
+                                    </p>
                                 </div>
                                 <div className="my-auto">
                                     <h3 className="text-sm lg:text-lg font-medium">Shalat Dzuhur</h3>
-                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">11.46 WIB</p>
+                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">
+                                        {formatTime(prayerTimes?.dzuhur)}
+                                    </p>
                                 </div>
                                 <div className="my-auto">
                                     <h3 className="text-sm lg:text-lg font-medium">Shalat Maghrib</h3>
-                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">17.40 WIB</p>
+                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">
+                                        {formatTime(prayerTimes?.maghrib)}
+                                    </p>
                                 </div>
                                 <div className="my-auto">
                                     <h3 className="text-sm lg:text-lg font-medium">Syuruk/Terbit</h3>
-                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">05.51 WIB</p>
+                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">
+                                        {formatTime(prayerTimes?.terbit)}
+                                    </p>
                                 </div>
                                 <div className="my-auto">
                                     <h3 className="text-sm lg:text-lg font-medium">Shalat Ashar</h3>
-                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">15.08 WIB</p>
+                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">
+                                        {formatTime(prayerTimes?.ashar)}
+                                    </p>
                                 </div>
                                 <div className="my-auto">
                                     <h3 className="text-sm lg:text-lg font-medium">Shalat Isya</h3>
-                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">18.53 WIB</p>
+                                    <p className="text-sm lg:text-lg font-normal text-[#2C3E9E]">
+                                        {formatTime(prayerTimes?.isya)}
+                                    </p>
                                 </div>
                             </div>
                         </div>
