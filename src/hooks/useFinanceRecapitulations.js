@@ -6,6 +6,8 @@ import { getFinanceRecapitulations } from "@/lib/finance-recapitulation"
 
 export default function useFinanceRecapitulations() {
     const [financeRecapitulations, setFinanceRecapitulations] = useState([])
+    const [totalIncome, setTotalIncome] = useState(0);
+    const [totalExpense, setTotalExpense] = useState(0);
     const [isLoading, setIsLoading] = useState(false)
     const [currentFilterDates, setCurrentFilterDates] = useState({
         startDate: null,
@@ -16,7 +18,10 @@ export default function useFinanceRecapitulations() {
         setIsLoading(true)
         try {
             const financeRecapitulations = await getFinanceRecapitulations(startDate, endDate)
-            setFinanceRecapitulations(financeRecapitulations)
+
+            setFinanceRecapitulations(financeRecapitulations?.finance_recapitulations);
+            setTotalIncome(financeRecapitulations?.total_income)
+            setTotalExpense(financeRecapitulations?.total_expense)
         } catch (error) {
             toast.error("Gagal memuat data finance recapitulations.")
             console.error("Fetch finance recapitulations error:", error)
@@ -31,6 +36,8 @@ export default function useFinanceRecapitulations() {
 
     return {
         financeRecapitulations,
+        totalIncome,
+        totalExpense,
         isLoading,
         currentFilterDates,
         fetchFinanceRecapitulations,

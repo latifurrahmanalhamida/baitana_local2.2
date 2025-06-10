@@ -31,6 +31,8 @@ export default function FinanceRecapitulationsPage() {
             <DataTable
                 columns={columns}
                 data={financeRecapitulationsHook.financeRecapitulations}
+                totalIncome={financeRecapitulationsHook.totalIncome}
+                totalExpense={financeRecapitulationsHook.totalExpense}
                 isLoading={financeRecapitulationsHook.isLoading}
                 onDateRangeChange={financeRecapitulationsHook.handleApplyDateFilter}
             />

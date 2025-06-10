@@ -20,14 +20,14 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import {DataTablePagination} from "@/components/DataTablePagination";
 import {DateRangeFilter} from "@/components/DateRangeFilter";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
-export function DataTable({ columns, data, isLoading = false, onDateRangeChange}) {
+export function DataTable({ columns, data, totalIncome, totalExpense, isLoading = false, onDateRangeChange}) {
     const [sorting, setSorting] = React.useState([])
     const [columnFilters, setColumnFilters] = React.useState([])
     const [columnVisibility, setColumnVisibility] = React.useState({})
@@ -70,6 +70,32 @@ export function DataTable({ columns, data, isLoading = false, onDateRangeChange}
             },
         },
     })
+
+    const sumOfIncome = table.getRowModel().rows.reduce((sum, row) => {
+        const incomeValue = row.original.income || "0";
+        const cleanedIncomeString = incomeValue
+            .replace(/Rp\.\s?/g, '')
+            .replace(/\./g, '')
+            .replace(/,/g, '.');
+
+        const income = parseFloat(cleanedIncomeString) || 0; // Parse to float, default to 0 if NaN
+        return sum + income;
+    }, 0);
+
+    const sumOfExpense = table.getRowModel().rows.reduce((sum, row) => {
+        const expenseValue = row.original.expense || "0";
+        const cleanedExpenseString = expenseValue
+            .replace(/Rp\.\s?/g, '')
+            .replace(/\./g, '')
+            .replace(/,/g, '.');
+
+        const expense = parseFloat(cleanedExpenseString) || 0; // Parse to float, default to 0 if NaN
+        return sum + expense;
+    }, 0);
+
+    const showGrandTotal = table.getFilteredRowModel().rows.length > table.getState().pagination.pageSize;
+
+    const firstTotalLabel = showGrandTotal ? "Total Halaman ini" : "Total"
 
     return (
         <>
@@ -200,6 +226,44 @@ export function DataTable({ columns, data, isLoading = false, onDateRangeChange}
                                     </TableRow>
                                 )}
                             </TableBody>
+                            {/* Table Footer */}
+                            <TableFooter>
+                                <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
+                                    <TableCell
+                                        colSpan={4} // Spans over 'index', 'date', 'category', 'description'
+                                        className="h-12 font-semibold text-gray-700 border-t border-gray-200 rounded-xl pl-7"
+                                    >
+                                        {firstTotalLabel}
+                                    </TableCell>
+
+                                    {/* This TableCell is specifically for the 'income' column */}
+                                    <TableCell className="h-12 font-semibold text-green-700 border-t border-gray-200 text-center rounded-xl">
+                                        {sumOfIncome.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0, })}
+                                    </TableCell>
+
+                                    {/* This TableCell is specifically for the 'expense' column */}
+                                    <TableCell className="h-12 font-semibold text-red-700 border-t border-gray-200 text-center rounded-xl">
+                                        {sumOfExpense.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0, })}
+                                    </TableCell>
+                                </TableRow>
+
+                                {showGrandTotal && (
+                                    <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
+                                        <TableCell
+                                            colSpan={4}
+                                            className="h-12 font-semibold text-gray-700 border-t border-gray-200 rounded-xl pl-7"
+                                        >
+                                            Grand Total
+                                        </TableCell>
+                                        <TableCell className="h-12 font-semibold text-green-700 border-t border-gray-200 text-center rounded-xl">
+                                            {totalIncome ? totalIncome : "Rp 0"}
+                                        </TableCell>
+                                        <TableCell className="h-12 font-semibold text-red-700 border-t border-gray-200 text-center rounded-xl">
+                                            {totalExpense ? totalExpense : "Rp 0"}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableFooter>
                         </Table>
                     </div>
 

@@ -23,7 +23,7 @@ export async function getFinanceRecapitulations(startDate = "", endDate = "") {
             method: "GET",
         })
 
-        return result.data?.finance_recapitulations || []
+        return result.data || []
     } catch (error) {
         console.error("Error getting finance recapitulations:", error.message)
         throw error
