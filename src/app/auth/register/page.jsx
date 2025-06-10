@@ -1,9 +1,6 @@
-import { GalleryVerticalEnd } from "lucide-react"
-
 import { RegisterForm } from "@/components/register/register-form"
-import {LoginForm} from "@/components/login/login-form";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div
       className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
