@@ -15,7 +15,6 @@ export default function useNewsCategories() {
         setIsLoading(true)
         try {
             const newsCategories = await getNewsCategories()
-            console.log(newsCategories)
             setNewsCategories(newsCategories)
         } catch (error) {
             toast.error("Gagal memuat data news categories")

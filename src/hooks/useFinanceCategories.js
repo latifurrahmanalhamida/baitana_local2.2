@@ -10,12 +10,11 @@ export default function useFinanceCategories() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false)
     const [selectedFinanceCategory, setSelectedFinanceCategory] = useState(null)
-    const [searchQuery, setSearchQuery] = useState("")
 
     const fetchFinanceCategories = useCallback(async () => {
         setIsLoading(true)
         try {
-            const financeCategories = await getFinanceCategories(searchQuery)
+            const financeCategories = await getFinanceCategories()
             setFinanceCategories(financeCategories)
         } catch (error) {
             toast.error("Gagal memuat data finance categories")
@@ -23,7 +22,7 @@ export default function useFinanceCategories() {
         } finally {
             setIsLoading(false)
         }
-    }, [searchQuery])
+    }, [])
 
     const handleAddFinanceCategory = async (values) => {
         setIsLoading(true)
@@ -89,10 +88,6 @@ export default function useFinanceCategories() {
         setIsDeleteAlertOpen(true)
     }
 
-    const handleSearch = (query) => {
-        setSearchQuery(query)
-    }
-
     return {
         financeCategories,
         isLoading,
@@ -101,7 +96,6 @@ export default function useFinanceCategories() {
         isDeleteAlertOpen,
         setIsDeleteAlertOpen,
         selectedFinanceCategory,
-        searchQuery,
         fetchFinanceCategories,
         handleAddFinanceCategory,
         handleEditFinanceCategory,
@@ -109,6 +103,5 @@ export default function useFinanceCategories() {
         openAddModal,
         openEditModal,
         openDeleteAlert,
-        handleSearch,
     }
 }

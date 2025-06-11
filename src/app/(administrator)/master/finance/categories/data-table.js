@@ -25,12 +25,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import {DataTablePagination} from "@/components/DataTablePagination";
 
-export function DataTable({ columns, data, isLoading = false, searchQuery, onSearchChange, onAddNew }) {
+export function DataTable({ columns, data, isLoading = false, onAddNew }) {
     const [sorting, setSorting] = React.useState([])
     const [columnFilters, setColumnFilters] = React.useState([])
     const [columnVisibility, setColumnVisibility] = React.useState({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [deboucedSerachQuery] = useDebounce(searchQuery, 300) // filter (tunda 300ms)
+    const [localSearchQuery, setLocalSearchQuery] = React.useState("")
+    const [debouncedSearchQuery] = useDebounce(localSearchQuery, 300) // Debounce local state
 
     const table = useReactTable({
         data,
@@ -39,7 +40,6 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        onGlobalFilterChange: onSearchChange,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -59,7 +59,7 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
             columnFilters,
             columnVisibility,
             rowSelection,
-            globalFilter: deboucedSerachQuery, // filter with debounce
+            globalFilter: debouncedSearchQuery, // filter debounce
         },
         initialState: {
             pagination: {
@@ -77,8 +77,8 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Cari kategori keuangan..."
-                                value={searchQuery}
-                                onChange={(event) => onSearchChange(event.target.value)}
+                                value={localSearchQuery}
+                                onChange={(event) => setLocalSearchQuery(event.target.value)}
                                 className="pl-9 h-10 border-gray-300 focus:border-[#2C3E9E] focus:ring-[#2C3E9E]"
                             />
                         </div>
@@ -175,9 +175,9 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                                 <TableRow>
                                     <TableCell colSpan={columns.length} className="h-32 text-center">
                                         <div className="flex flex-col items-center justify-center space-y-2">
-                                            <div className="text-muted-foreground">Tidak ada data role ditemukan</div>
+                                            <div className="text-muted-foreground">Tidak ada data kategori keuangan ditemukan</div>
                                             <div className="text-sm text-muted-foreground">
-                                                Coba ubah filter pencarian atau tambah role baru
+                                                Coba ubah filter pencarian atau tambah kategori keuangan baru
                                             </div>
                                         </div>
                                     </TableCell>

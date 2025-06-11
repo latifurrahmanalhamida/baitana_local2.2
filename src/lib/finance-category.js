@@ -1,14 +1,11 @@
 import apiClient from "@/lib/apiClient";
+import API from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+const FINANCE_CATEGORIES_API = API.finance_categories || `${process.env.NEXT_PUBLIC_API_BASE_URL}/finance/categories`;
 
-export async function getFinanceCategories(searchQuery = "") {
+export async function getFinanceCategories() {
     try {
-        const url = searchQuery
-            ? `${API_URL}/resource/finance/categories?search=${encodeURIComponent(searchQuery)}`
-            : `${API_URL}/resource/finance/categories`
-
-        const result = await apiClient.makeRequest(url, {
+        const result = await apiClient.makeRequest(FINANCE_CATEGORIES_API, {
             method: "GET",
         })
 
@@ -22,7 +19,7 @@ export async function getFinanceCategories(searchQuery = "") {
 export async function getFinanceCategoriesByParam(param = "type", value = "") {
     try {
         const query = `${encodeURIComponent(param)}=${encodeURIComponent(value)}`
-        const url = `${API_URL}/resource/finance/categories?${query}`
+        const url = `${FINANCE_CATEGORIES_API}?${query}`
 
         const result = await apiClient.makeRequest(url, {
             method: "GET",
@@ -38,7 +35,7 @@ export async function getFinanceCategoriesByParam(param = "type", value = "") {
 
 export async function createFinanceCategory(financeCategoryData) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/categories`, {
+        return await apiClient.makeRequest(FINANCE_CATEGORIES_API, {
             method: "POST",
             body: JSON.stringify(financeCategoryData),
         });
@@ -50,7 +47,7 @@ export async function createFinanceCategory(financeCategoryData) {
 
 export async function updateFinanceCategory(id, financeCategoryData) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/categories/${id}`, {
+        return await apiClient.makeRequest(`${FINANCE_CATEGORIES_API}/${id}`, {
             method: "PUT",
             body: JSON.stringify(financeCategoryData),
         });
@@ -62,7 +59,7 @@ export async function updateFinanceCategory(id, financeCategoryData) {
 
 export async function deleteFinanceCategory(id) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/categories/${id}`, {
+        return await apiClient.makeRequest(`${FINANCE_CATEGORIES_API}/${id}`, {
             method: "DELETE",
         });
     } catch (error) {
