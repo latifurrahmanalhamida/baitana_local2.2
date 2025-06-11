@@ -18,7 +18,7 @@ export default function HeroSection() {
     const [nextPrayer, setNextPrayer] = useState(null)
     const [timeUntilNext, setTimeUntilNext] = useState("")
     const [currentDate, setCurrentDate] = useState("")
-    const [expectedFormat, setExpectedFormat] = useState(3);
+    const [expectedFormat, setExpectedFormat] = useState(2);
 
     useEffect(() => {
         setMounted(true)
@@ -140,6 +140,39 @@ export default function HeroSection() {
         return <span className="font-mono text-gray-400">{scrambled}</span>;
     };
 
+    const CountdownSkeleton = () => {
+        const skeletonClass = "w-6 h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded animate-pulse inline-block";
+
+        return (
+            <span className="flex items-center mx-2 space-x-1">
+                {expectedFormat === 3 && (
+                    <>
+                        <span className={skeletonClass}></span>
+                        <span className="text-gray-400 font-bold">jam :</span>
+                        <span className={skeletonClass}></span>
+                        <span className="text-gray-400 font-bold">menit :</span>
+                        <span className={skeletonClass}></span>
+                        <span className="text-gray-400 font-bold">detik</span>
+                    </>
+                )}
+                {expectedFormat === 2 && (
+                    <>
+                        <span className={skeletonClass}></span>
+                        <span className="text-gray-400 font-bold">menit :</span>
+                        <span className={skeletonClass}></span>
+                        <span className="text-gray-400 font-bold">detik</span>
+                    </>
+                )}
+                {expectedFormat === 1 && (
+                    <>
+                        <span className={skeletonClass}></span>
+                        <span className="text-gray-400 font-bold">detik</span>
+                    </>
+                )}
+            </span>
+        );
+    };
+
     const activities = [
         {
             title: "Al - Qur'an",
@@ -244,21 +277,7 @@ export default function HeroSection() {
                                 {timeUntilNext ? (
                                     <span className="mx-2 font-bold">{timeUntilNext}</span>
                                 ) : (
-                                    <span className="flex items-center mx-2 space-x-1">
-                                        {expectedFormat >= 3 && (
-                                            <>
-                                                <span className="w-16 h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded animate-pulse inline-block"></span>
-                                                <span className="text-gray-400 font-bold">:</span>
-                                            </>
-                                        )}
-                                        {expectedFormat >= 2 && (
-                                            <>
-                                                <span className="w-16 h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded animate-pulse inline-block"></span>
-                                                <span className="text-gray-400 font-bold">:</span>
-                                            </>
-                                        )}
-                                            <span className="w-16 h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded animate-pulse inline-block"></span>
-                                            </span>
+                                    <CountdownSkeleton />
                                 )}{" "} lagi
                             </p>
                         </div>
