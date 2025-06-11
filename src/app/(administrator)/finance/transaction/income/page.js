@@ -9,15 +9,37 @@ import { DeleteAlert } from "@/components/finances/incomes/DeleteAlert";
 import { ReceiptPreviewModal } from "@/components/ReceiptPreviewModal";
 
 export default function FinanceIncomePage() {
-    const financeIncomesHook = useFinanceIncomes();
+
+    const {
+        financeIncomes,
+        financeCategories,
+        isLoading,
+        isModalOpen,
+        setIsModalOpen,
+        isPreviewReceiptModalOpen,
+        isDeleteAlertOpen,
+        setIsDeleteAlertOpen,
+        receiptToPreview,
+        selectedFinanceIncome,
+        fetchFinanceIncomes,
+        fetchFinanceCategories,
+        handleAddFinanceIncome,
+        handleEditFinanceIncome,
+        handleDeleteFinanceIncome,
+        openAddModal,
+        openEditModal,
+        openPreviewReceiptModal,
+        closePreviewReceiptModal,
+        openDeleteAlert,
+    } = useFinanceIncomes();
 
     useEffect(() => {
-        financeIncomesHook.fetchFinanceIncomes()
-        financeIncomesHook.fetchFinanceCategories()
-    }, [])
+        fetchFinanceIncomes()
+        fetchFinanceCategories()
+    }, [fetchFinanceIncomes, fetchFinanceCategories])
 
     // Create columns with action handlers
-    const columns = createColumns(financeIncomesHook.openEditModal, financeIncomesHook.openDeleteAlert, financeIncomesHook.openPreviewReceiptModal)
+    const columns = createColumns(openEditModal, openDeleteAlert, openPreviewReceiptModal)
 
     return (
         <div className="container mx-auto space-y-6">
@@ -28,35 +50,33 @@ export default function FinanceIncomePage() {
 
             <DataTable
                 columns={columns}
-                data={financeIncomesHook.financeIncomes}
-                isLoading={financeIncomesHook.isLoading}
-                searchQuery={financeIncomesHook.searchQuery}
-                onSearchChange={financeIncomesHook.handleSearch}
-                onAddNew={financeIncomesHook.openAddModal}
+                data={financeIncomes}
+                isLoading={isLoading}
+                onAddNew={openAddModal}
             />
 
             <FinanceIncomeForm
-                isModalOpen={financeIncomesHook.isModalOpen}
-                setIsModalOpen={financeIncomesHook.setIsModalOpen}
-                selectedFinanceIncome={financeIncomesHook.selectedFinanceIncome}
-                handleAddFinanceIncome={financeIncomesHook.handleAddFinanceIncome}
-                handleEditFinanceIncome={financeIncomesHook.handleEditFinanceIncome}
-                isLoading={financeIncomesHook.isLoading}
-                financeCategories={financeIncomesHook.financeCategories}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                selectedFinanceIncome={selectedFinanceIncome}
+                handleAddFinanceIncome={handleAddFinanceIncome}
+                handleEditFinanceIncome={handleEditFinanceIncome}
+                isLoading={isLoading}
+                financeCategories={financeCategories}
             />
 
             <ReceiptPreviewModal
-                isOpen={financeIncomesHook.isPreviewReceiptModalOpen}
-                onClose={financeIncomesHook.closePreviewReceiptModal}
-                receiptPath={financeIncomesHook.receiptToPreview}
+                isOpen={isPreviewReceiptModalOpen}
+                onClose={closePreviewReceiptModal}
+                receiptPath={receiptToPreview}
             />
 
             <DeleteAlert
-                isDeleteAlertOpen={financeIncomesHook.isDeleteAlertOpen}
-                setIsDeleteAlertOpen={financeIncomesHook.setIsDeleteAlertOpen}
-                selectedFinanceIncome={financeIncomesHook.selectedFinanceIncome}
-                handleDeleteFinanceIncome={financeIncomesHook.handleDeleteFinanceIncome}
-                isLoading={financeIncomesHook.isLoading}
+                isDeleteAlertOpen={isDeleteAlertOpen}
+                setIsDeleteAlertOpen={setIsDeleteAlertOpen}
+                selectedFinanceIncome={selectedFinanceIncome}
+                handleDeleteFinanceIncome={handleDeleteFinanceIncome}
+                isLoading={isLoading}
             />
         </div>
     )

@@ -14,12 +14,11 @@ export default function useFinanceIncomes() {
     const [isPreviewReceiptModalOpen, setIsPreviewReceiptModalOpen] = useState(false);
     const [receiptToPreview, setReceiptToPreview] = useState(null);
     const [selectedFinanceIncome, setSelectedFinanceIncome] = useState(null)
-    const [searchQuery, setSearchQuery] = useState("")
 
     const fetchFinanceIncomes = useCallback(async () => {
         setIsLoading(true)
         try {
-            const financeIncomes = await getFinanceIncomes(searchQuery)
+            const financeIncomes = await getFinanceIncomes()
             setFinanceIncomes(financeIncomes)
         } catch (error) {
             toast.error("Gagal memuat data finance incomes")
@@ -27,7 +26,7 @@ export default function useFinanceIncomes() {
         } finally {
             setIsLoading(false)
         }
-    }, [searchQuery])
+    }, [])
 
     const fetchFinanceCategories = useCallback(async () => {
         setIsLoading(true)
@@ -107,8 +106,6 @@ export default function useFinanceIncomes() {
     }
 
     const openPreviewReceiptModal = (financeIncome) => {
-        console.log(financeIncome.transaction_receipt);
-        console.log('masuk')
         if (financeIncome && financeIncome.transaction_receipt) {
             setReceiptToPreview(financeIncome.transaction_receipt);
             setIsPreviewReceiptModalOpen(true)
@@ -120,10 +117,6 @@ export default function useFinanceIncomes() {
     const closePreviewReceiptModal = () => {
         setReceiptToPreview(null);
         setIsPreviewReceiptModalOpen(false);
-    }
-
-    const handleSearch = (query) => {
-        setSearchQuery(query)
     }
 
     return {
@@ -138,7 +131,6 @@ export default function useFinanceIncomes() {
         setIsDeleteAlertOpen,
         receiptToPreview,
         selectedFinanceIncome,
-        searchQuery,
         fetchFinanceIncomes,
         fetchFinanceCategories,
         handleAddFinanceIncome,
@@ -149,6 +141,5 @@ export default function useFinanceIncomes() {
         openPreviewReceiptModal,
         closePreviewReceiptModal,
         openDeleteAlert,
-        handleSearch,
     }
 }

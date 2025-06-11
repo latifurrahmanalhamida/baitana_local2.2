@@ -1,14 +1,11 @@
 import apiClient from "@/lib/apiClient";
+import API from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+const FINANCE_INCOMES_API = API.finance_incomes || `${process.env.NEXT_PUBLIC_API_BASE_URL}/finance/incomes`;
 
-export async function getFinanceIncomes(searchQuery = "") {
+export async function getFinanceIncomes() {
     try {
-        const url = searchQuery
-            ? `${API_URL}/resource/finance/transaction/incomes?search=${encodeURIComponent(searchQuery)}`
-            : `${API_URL}/resource/finance/transaction/incomes`
-
-        const result = await apiClient.makeRequest(url, {
+        const result = await apiClient.makeRequest(FINANCE_INCOMES_API, {
             method: "GET",
         })
 
@@ -21,7 +18,7 @@ export async function getFinanceIncomes(searchQuery = "") {
 
 export async function createFinanceIncome(financeIncomeData) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/transaction/incomes`, {
+        return await apiClient.makeRequest(FINANCE_INCOMES_API, {
             method: "POST",
             body: financeIncomeData,
         });
@@ -34,7 +31,7 @@ export async function createFinanceIncome(financeIncomeData) {
 export async function updateFinanceIncome(id, financeIncomeData) {
     try {
         financeIncomeData.append("_method", "PUT");
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/transaction/incomes/${id}`, {
+        return await apiClient.makeRequest(`${FINANCE_INCOMES_API}/${id}`, {
             method: "POST",
             body: financeIncomeData,
         });
@@ -46,7 +43,7 @@ export async function updateFinanceIncome(id, financeIncomeData) {
 
 export async function deleteFinanceIncome(id) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/transaction/incomes/${id}`, {
+        return await apiClient.makeRequest(`${FINANCE_INCOMES_API}/${id}`, {
             method: "DELETE",
         });
     } catch (error) {
