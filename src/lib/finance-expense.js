@@ -1,14 +1,11 @@
 import apiClient from "@/lib/apiClient";
+import API from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+const FINANCE_EXPENSES_API = API.finance_expenses || `${process.env.NEXT_PUBLIC_API_BASE_URL}/finance/expenses`;
 
-export async function getFinanceExpenses(searchQuery = "") {
+export async function getFinanceExpenses() {
     try {
-        const url = searchQuery
-            ? `${API_URL}/resource/finance/transaction/expenses?search=${encodeURIComponent(searchQuery)}`
-            : `${API_URL}/resource/finance/transaction/expenses`
-
-        const result = await apiClient.makeRequest(url, {
+        const result = await apiClient.makeRequest(FINANCE_EXPENSES_API, {
             method: "GET",
         })
 
@@ -21,7 +18,7 @@ export async function getFinanceExpenses(searchQuery = "") {
 
 export async function createFinanceExpense(financeExpenseData) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/transaction/expenses`, {
+        return await apiClient.makeRequest(FINANCE_EXPENSES_API, {
             method: "POST",
             body: financeExpenseData,
         });
@@ -34,7 +31,7 @@ export async function createFinanceExpense(financeExpenseData) {
 export async function updateFinanceExpense(id, financeExpenseData) {
     try {
         financeExpenseData.append("_method", "PUT");
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/transaction/expenses/${id}`, {
+        return await apiClient.makeRequest(`${FINANCE_EXPENSES_API}/${id}`, {
             method: "POST",
             body: financeExpenseData,
         });
@@ -46,7 +43,7 @@ export async function updateFinanceExpense(id, financeExpenseData) {
 
 export async function deleteFinanceExpense(id) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/finance/transaction/expenses/${id}`, {
+        return await apiClient.makeRequest(`${FINANCE_EXPENSES_API}/${id}`, {
             method: "DELETE",
         });
     } catch (error) {

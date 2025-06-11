@@ -14,12 +14,11 @@ export default function useFinanceExpenses() {
     const [isPreviewReceiptModalOpen, setIsPreviewReceiptModalOpen] = useState(false);
     const [receiptToPreview, setReceiptToPreview] = useState(null);
     const [selectedFinanceExpense, setselectedFinanceExpense] = useState(null)
-    const [searchQuery, setSearchQuery] = useState("")
 
     const fetchFinanceExpenses = useCallback(async () => {
         setIsLoading(true)
         try {
-            const FinanceExpenses = await getFinanceExpenses(searchQuery)
+            const FinanceExpenses = await getFinanceExpenses()
             setFinanceExpenses(FinanceExpenses)
         } catch (error) {
             toast.error("Gagal memuat data finance expenses")
@@ -27,7 +26,7 @@ export default function useFinanceExpenses() {
         } finally {
             setIsLoading(false)
         }
-    }, [searchQuery])
+    }, [])
 
     const fetchFinanceCategories = useCallback(async () => {
         setIsLoading(true)
@@ -120,10 +119,6 @@ export default function useFinanceExpenses() {
         setIsPreviewReceiptModalOpen(false);
     }
 
-    const handleSearch = (query) => {
-        setSearchQuery(query)
-    }
-
     return {
         financeExpenses,
         financeCategories,
@@ -136,7 +131,6 @@ export default function useFinanceExpenses() {
         setIsDeleteAlertOpen,
         receiptToPreview,
         selectedFinanceExpense,
-        searchQuery,
         fetchFinanceExpenses,
         fetchFinanceCategories,
         handleAddFinanceExpense,
@@ -147,6 +141,5 @@ export default function useFinanceExpenses() {
         openPreviewReceiptModal,
         closePreviewReceiptModal,
         openDeleteAlert,
-        handleSearch,
     }
 }

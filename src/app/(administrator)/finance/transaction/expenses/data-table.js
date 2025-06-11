@@ -24,13 +24,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import {DataTablePagination} from "@/components/DataTablePagination";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-export function DataTable({ columns, data, isLoading = false, searchQuery, onSearchChange, onAddNew }) {
+export function DataTable({ columns, data, isLoading = false, onAddNew }) {
     const [sorting, setSorting] = React.useState([])
     const [columnFilters, setColumnFilters] = React.useState([])
     const [columnVisibility, setColumnVisibility] = React.useState({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [debouncedSearchQuery] = useDebounce(searchQuery, 300) // filter (tunda 300ms)
+    const [localSearchQuery, setLocalSearchQuery] = React.useState("")
+    const [debouncedSearchQuery] = useDebounce(localSearchQuery, 300) // Debounce local state
 
     const table = useReactTable({
         data,
@@ -39,7 +41,6 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        onGlobalFilterChange: onSearchChange, // filter
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -79,8 +80,8 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Cari transaksi keuangan keluar..."
-                                value={searchQuery}
-                                onChange={(event) => onSearchChange(event.target.value)}
+                                value={localSearchQuery}
+                                onChange={(event) => setLocalSearchQuery(event.target.value)}
                                 className="pl-9 h-10 border-gray-300 focus:border-[#2C3E9E] focus:ring-[#2C3E9E]"
                             />
                         </div>
@@ -156,15 +157,20 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                         <TableBody>
                             {isLoading ? (
                                 // Loading skeleton
-                                Array.from({ length: 7 }).map((_, index) => (
-                                    <TableRow key={index} className="hover:bg-gray-50/50">
-                                        {columns.map((_, cellIndex) => (
-                                            <TableCell key={cellIndex} className="h-16 px-4">
-                                                <Skeleton className="h-6 w-full rounded" />
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
+                                // Array.from({ length: 7 }).map((_, index) => (
+                                //     <TableRow key={index} className="hover:bg-gray-50/50">
+                                //         {columns.map((_, cellIndex) => (
+                                //             <TableCell key={cellIndex} className="h-16 px-4">
+                                //                 <Skeleton className="h-6 w-full rounded" />
+                                //             </TableCell>
+                                //         ))}
+                                //     </TableRow>
+                                // ))
+                                <TableRow>
+                                    <TableCell colSpan={columns.length} className="p-0">
+                                        <LoadingSpinner />
+                                    </TableCell>
+                                </TableRow>
                             ) : table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map((row) => (
                                     <TableRow

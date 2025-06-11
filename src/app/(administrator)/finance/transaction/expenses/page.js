@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
 import useFinanceExpenses from "@/hooks/useFinanceExpenses";
+import { useEffect } from "react"
 import { DataTable } from "@/app/(administrator)/finance/transaction/expenses/data-table";
 import { createColumns } from "@/app/(administrator)/finance/transaction/expenses/column";
 import { FinanceExpenseForm } from "@/components/finances/expenses/FinanceExpenseForm";
@@ -9,15 +9,36 @@ import { DeleteAlert } from "@/components/finances/expenses/DeleteAlert";
 import { ReceiptPreviewModal } from "@/components/ReceiptPreviewModal";
 
 export default function FinanceExpensePage() {
-    const financeExpensesHook = useFinanceExpenses();
+    const {
+        financeExpenses,
+        financeCategories,
+        isLoading,
+        isModalOpen,
+        setIsModalOpen,
+        isPreviewReceiptModalOpen,
+        isDeleteAlertOpen,
+        setIsDeleteAlertOpen,
+        receiptToPreview,
+        selectedFinanceExpense,
+        fetchFinanceExpenses,
+        fetchFinanceCategories,
+        handleAddFinanceExpense,
+        handleEditFinanceExpense,
+        handleDeleteFinanceExpense,
+        openAddModal,
+        openEditModal,
+        openPreviewReceiptModal,
+        closePreviewReceiptModal,
+        openDeleteAlert,
+    } = useFinanceExpenses();
 
     useEffect(() => {
-        financeExpensesHook.fetchFinanceExpenses()
-        financeExpensesHook.fetchFinanceCategories()
-    }, [])
+        fetchFinanceExpenses()
+        fetchFinanceCategories();
+    }, [fetchFinanceExpenses, fetchFinanceCategories])
 
     // Create columns with action handlers
-    const columns = createColumns(financeExpensesHook.openEditModal, financeExpensesHook.openDeleteAlert, financeExpensesHook.openPreviewReceiptModal)
+    const columns = createColumns(openEditModal, openDeleteAlert, openPreviewReceiptModal)
 
     return (
         <div className="container mx-auto space-y-6">
@@ -28,35 +49,33 @@ export default function FinanceExpensePage() {
 
             <DataTable
                 columns={columns}
-                data={financeExpensesHook.financeExpenses}
-                isLoading={financeExpensesHook.isLoading}
-                searchQuery={financeExpensesHook.searchQuery}
-                onSearchChange={financeExpensesHook.handleSearch}
-                onAddNew={financeExpensesHook.openAddModal}
+                data={financeExpenses}
+                isLoading={isLoading}
+                onAddNew={openAddModal}
             />
 
             <FinanceExpenseForm
-                isModalOpen={financeExpensesHook.isModalOpen}
-                setIsModalOpen={financeExpensesHook.setIsModalOpen}
-                selectedFinanceExpense={financeExpensesHook.selectedFinanceExpense}
-                handleAddFinanceExpense={financeExpensesHook.handleAddFinanceExpense}
-                handleEditFinanceExpense={financeExpensesHook.handleEditFinanceExpense}
-                isLoading={financeExpensesHook.isLoading}
-                financeCategories={financeExpensesHook.financeCategories}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                selectedFinanceExpense={selectedFinanceExpense}
+                handleAddFinanceExpense={handleAddFinanceExpense}
+                handleEditFinanceExpense={handleEditFinanceExpense}
+                isLoading={isLoading}
+                financeCategories={financeCategories}
             />
 
             <ReceiptPreviewModal
-                isOpen={financeExpensesHook.isPreviewReceiptModalOpen}
-                onClose={financeExpensesHook.closePreviewReceiptModal}
-                receiptPath={financeExpensesHook.receiptToPreview}
+                isOpen={isPreviewReceiptModalOpen}
+                onClose={closePreviewReceiptModal}
+                receiptPath={receiptToPreview}
             />
 
             <DeleteAlert
-                isDeleteAlertOpen={financeExpensesHook.isDeleteAlertOpen}
-                setIsDeleteAlertOpen={financeExpensesHook.setIsDeleteAlertOpen}
-                selectedFinanceExpense={financeExpensesHook.selectedFinanceExpense}
-                handleDeleteFinanceExpense={financeExpensesHook.handleDeleteFinanceExpense}
-                isLoading={financeExpensesHook.isLoading}
+                isDeleteAlertOpen={isDeleteAlertOpen}
+                setIsDeleteAlertOpen={setIsDeleteAlertOpen}
+                selectedFinanceExpense={selectedFinanceExpense}
+                handleDeleteFinanceExpense={handleDeleteFinanceExpense}
+                isLoading={isLoading}
             />
         </div>
     )
