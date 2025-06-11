@@ -25,12 +25,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import {DataTablePagination} from "@/components/DataTablePagination";
 
-export function DataTable({ columns, data, isLoading = false, searchQuery, onSearchChange, onAddNew }) {
+export function DataTable({ columns, data, isLoading = false, onAddNew }) {
     const [sorting, setSorting] = React.useState([])
     const [columnFilters, setColumnFilters] = React.useState([])
     const [columnVisibility, setColumnVisibility] = React.useState({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [debouncedSearchQuery] = useDebounce(searchQuery, 300) // filter (tunda 300ms)
+    const [localSearchQuery, setLocalSearchQuery] = React.useState("")
+    const [debouncedSearchQuery] = useDebounce(localSearchQuery, 300) // Debounce local state
 
     const table = useReactTable({
         data,
@@ -39,7 +40,6 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        onGlobalFilterChange: onSearchChange, // filter
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -77,9 +77,9 @@ export function DataTable({ columns, data, isLoading = false, searchQuery, onSea
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Cari users"
-                                value={searchQuery}
-                                onChange={(event) => onSearchChange(event.target.value)}
+                                placeholder="Cari users..."
+                                value={localSearchQuery}
+                                onChange={(event) => setLocalSearchQuery(event.target.value)}
                                 className="pl-9 h-10 border-gray-300 focus:border-[#2C3E9E] focus:ring-[#2C3E9E]"
                             />
                         </div>

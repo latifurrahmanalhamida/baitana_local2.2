@@ -9,11 +9,10 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
         id: "index",
         header: () => <div className="text-center font-semibold">#</div>,
         cell: ({ row, table }) => {
-            // Cari index asli dari data berdasarkan ID unik
-            const originalData = table.options.data
-            const currentRowId = row.original.id // asumsi ada field 'id' unik
-            const originalIndex = originalData.findIndex(item => item.id === currentRowId) + 1
-            return <div className="text-center font-medium text-muted-foreground">{originalIndex}</div>
+            const filteredRows = table.getFilteredRowModel().rows;
+            const currentRowId = row.original.id;
+            const currentIndex = filteredRows.findIndex(r => r.original.id === currentRowId) + 1;
+            return <div className="text-center font-medium text-muted-foreground">{currentIndex}</div>;
         },
         enableSorting: false,
         size: 60,

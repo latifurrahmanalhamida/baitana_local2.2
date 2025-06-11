@@ -12,12 +12,11 @@ export default function useUsers() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
 
     const fetchUsers = useCallback (async () => {
         setIsLoading(true);
         try {
-            const users = await getUsers(searchQuery);
+            const users = await getUsers();
             setUsers(users);
         } catch (error) {
             toast.error("Gagal memuat data users.");
@@ -25,7 +24,7 @@ export default function useUsers() {
         } finally {
             setIsLoading(false);
         }
-    }, [searchQuery]);
+    }, []);
 
     const fetchRoles = useCallback(async () => {
         try {
@@ -114,7 +113,6 @@ export default function useUsers() {
         isDeleteAlertOpen,
         setIsDeleteAlertOpen,
         selectedUser,
-        searchQuery,
         fetchUsers,
         fetchRoles,
         handleAddUser,
@@ -123,6 +121,5 @@ export default function useUsers() {
         openAddModal,
         openEditModal,
         openDeleteAlert,
-        handleSearch
     }
 }

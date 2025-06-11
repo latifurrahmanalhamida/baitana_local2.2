@@ -5,19 +5,15 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowUpDown, Pencil, Trash2, Mail, User } from "lucide-react"
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
-    ? process.env.NEXT_PUBLIC_BASE_URL
-    : "http://localhost:8000/";
-
 export const createColumns = (openEditModal, openDeleteAlert) => [
     {
         id: "index",
         header: () => <div className="text-center font-semibold">#</div>,
         cell: ({ row, table }) => {
-            const originalData = table.options.data
-            const currentRowId = row.original.id
-            const originalIndex = originalData.findIndex(item => item.id === currentRowId) + 1
-            return <div className="text-center font-medium text-muted-foreground">{originalIndex}</div>
+            const filteredRows = table.getFilteredRowModel().rows;
+            const currentRowId = row.original.id;
+            const currentIndex = filteredRows.findIndex(r => r.original.id === currentRowId) + 1;
+            return <div className="text-center font-medium text-muted-foreground">{currentIndex}</div>;
         },
         enableSorting: false,
         size: 60,
@@ -27,7 +23,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
         header: () => <div className="text-center font-semibold">Foto</div>,
         cell: ({ row }) => {
             const user = row.original
-            const photoUrl = user.photo ? `${BASE_URL}${user.photo}` : null
+            const photoUrl = user.photo ?? null
 
             return (
                 <div className="flex justify-center">

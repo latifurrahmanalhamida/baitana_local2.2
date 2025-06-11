@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect } from "react";
 import useUsers from "@/hooks/useUsers";
+import { useEffect } from "react";
 import {DataTable} from "@/app/(administrator)/master/users/data-table";
 import {createColumns} from "@/app/(administrator)/master/users/column";
 import {UserForm} from "@/components/users/UserForm";
@@ -9,14 +9,32 @@ import DeleteAlert from "@/components/users/DeleteAlert";
 
 
 export default function UserPage() {
-    const usersHook = useUsers()
+
+    const {
+        users,
+        roles,
+        isLoading,
+        isModalOpen,
+        setIsModalOpen,
+        isDeleteAlertOpen,
+        setIsDeleteAlertOpen,
+        selectedUser,
+        fetchUsers,
+        fetchRoles,
+        handleAddUser,
+        handleEditUser,
+        handleDeleteUser,
+        openAddModal,
+        openEditModal,
+        openDeleteAlert
+    } = useUsers();
 
     useEffect(() => {
-        usersHook.fetchUsers()
-        usersHook.fetchRoles()
-    }, [])
+        fetchUsers();
+        fetchRoles()
+    }, [fetchUsers, fetchRoles])
 
-    const columns = createColumns(usersHook.openEditModal, usersHook.openDeleteAlert)
+    const columns = createColumns(openEditModal, openDeleteAlert)
 
     return (
         <div className="container mx-auto space-y-6">
@@ -27,29 +45,27 @@ export default function UserPage() {
 
             <DataTable
                 columns={columns}
-                data={usersHook.users}
-                isLoading={usersHook.isLoading}
-                searchQuery={usersHook.searchQuery}
-                onSearchChange={usersHook.handleSearch}
-                onAddNew={usersHook.openAddModal}
+                data={users}
+                isLoading={isLoading}
+                onAddNew={openAddModal}
             />
 
             <UserForm
-                isModalOpen={usersHook.isModalOpen}
-                setIsModalOpen={usersHook.setIsModalOpen}
-                selectedUser={usersHook.selectedUser}
-                handleAddUser={usersHook.handleAddUser}
-                handleEditUser={usersHook.handleEditUser}
-                isLoading={usersHook.isLoading}
-                roles={usersHook.roles}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                selectedUser={selectedUser}
+                handleAddUser={handleAddUser}
+                handleEditUser={handleEditUser}
+                isLoading={isLoading}
+                roles={roles}
             />
 
             <DeleteAlert
-                isDeleteAlertOpen={usersHook.isDeleteAlertOpen}
-                setIsDeleteAlertOpen={usersHook.setIsDeleteAlertOpen}
-                selectedUser={usersHook.selectedUser}
-                handleDeleteUser={usersHook.handleDeleteUser}
-                isLoading={usersHook.isLoading}
+                isDeleteAlertOpen={isDeleteAlertOpen}
+                setIsDeleteAlertOpen={setIsDeleteAlertOpen}
+                selectedUser={selectedUser}
+                handleDeleteUser={handleDeleteUser}
+                isLoading={isLoading}
             />
         </div>
     );
