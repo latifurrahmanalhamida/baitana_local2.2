@@ -1,30 +1,11 @@
-import { RegisterForm } from "@/components/register/register-form";
+import { LoginForm } from "@/components/login/login-form";
 
-export default function RegisterPage() {
+export default function LoginPage() {
     return (
         <div
-            className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10"
-            style={{
-                backgroundImage: `
-                    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px), /* Pola Vertikal (Lapisan Atas) */
-                    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px), /* Pola Horizontal (Lapisan Atas) */
-                    linear-gradient(to right, #e0e7ff, var(--muted))
-                `,
-                backgroundSize: `
-                    30px 30px,    
-                    30px 30px,    
-                    100% 100%     
-                `,
-                backgroundRepeat: `
-                    repeat,      
-                    repeat,      
-                    no-repeat     
-                `,
-                backgroundColor: 'var(--muted)',
-            }}
-        >
-            <div className="flex w-full max-w-sm md:max-w-5xl justify-center">
-                <RegisterForm title={"Selamat Datang!"} description={"Lengkapi form ini untuk membuat akun baru."} />
+            className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
+            <div className="w-full max-w-sm md:max-w-3xl">
+                <LoginForm title={"Selamat Datang Kembali!"} description={"Silahkan login untuk masuk ke sistem."} />
             </div>
         </div>
     );
