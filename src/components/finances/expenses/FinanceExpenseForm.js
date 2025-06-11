@@ -20,10 +20,6 @@ import { toast } from "sonner"
 import { showMultipleErrorToasts } from "@/utlis/toast-error-handle"
 import { Badge } from "@/components/ui/badge";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
-    ? process.env.NEXT_PUBLIC_BASE_URL
-    : "http://localhost:8000/";
-
 const getFileTypeFromUrl = (urlOrName) => {
     if (!urlOrName || typeof urlOrName !== 'string') {
         return '';
@@ -86,7 +82,7 @@ export function FinanceExpenseForm({
             })
 
             if (selectedFinanceExpense?.transaction_receipt) {
-                setPreviewUrl(`${BASE_URL}${selectedFinanceExpense.transaction_receipt}`)
+                setPreviewUrl(selectedFinanceExpense.transaction_receipt)
             } else {
                 setPreviewUrl(null)
             }
@@ -147,7 +143,7 @@ export function FinanceExpenseForm({
     const removeFile = () => {
         setSelectedFile(null)
         if (isEditMode && selectedFinanceExpense?.transaction_receipt) {
-            setPreviewUrl(`${BASE_URL}${selectedFinanceExpense.transaction_receipt}`)
+            setPreviewUrl(selectedFinanceExpense.transaction_receipt)
         } else {
             setPreviewUrl(null)
         }
@@ -208,7 +204,7 @@ export function FinanceExpenseForm({
     const renderTransactionReceiptPreview = () => {
         const fileToPreview = selectedFile || selectedFinanceExpense;
 
-        const currentPreviewUrl = selectedFile ? previewUrl : (selectedFinanceExpense?.transaction_receipt ? `${BASE_URL}${selectedFinanceExpense.transaction_receipt}` : null);
+        const currentPreviewUrl = selectedFile ? previewUrl : (selectedFinanceExpense?.transaction_receipt ? selectedFinanceExpense.transaction_receipt : null);
 
         if (!fileToPreview || !currentPreviewUrl) {
             return null;

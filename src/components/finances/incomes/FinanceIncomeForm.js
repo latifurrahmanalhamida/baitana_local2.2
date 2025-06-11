@@ -21,10 +21,6 @@ import { toast } from "sonner"
 import { showMultipleErrorToasts } from "@/utlis/toast-error-handle"
 import {Badge} from "@/components/ui/badge";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
-    ? process.env.NEXT_PUBLIC_BASE_URL
-    : "http://localhost:8000/";
-
 const getFileTypeFromUrl = (urlOrName) => {
     if (!urlOrName || typeof urlOrName !== 'string') {
         return '';
@@ -87,7 +83,7 @@ export function FinanceIncomeForm({
             })
 
             if (selectedFinanceIncome?.transaction_receipt) {
-                setPreviewUrl(`${BASE_URL}${selectedFinanceIncome.transaction_receipt}`)
+                setPreviewUrl(selectedFinanceIncome.transaction_receipt)
             } else {
                 setPreviewUrl(null)
             }
@@ -148,7 +144,7 @@ export function FinanceIncomeForm({
     const removeFile = () => {
         setSelectedFile(null)
         if (isEditMode && selectedFinanceIncome?.transaction_receipt) {
-            setPreviewUrl(`${BASE_URL}${selectedFinanceIncome.transaction_receipt}`)
+            setPreviewUrl(selectedFinanceIncome.transaction_receipt)
         } else {
             setPreviewUrl(null)
         }
