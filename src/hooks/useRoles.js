@@ -10,12 +10,11 @@ export default function useRoles() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false)
     const [selectedRole, setSelectedRole] = useState(null)
-    const [searchQuery, setSearchQuery] = useState("")
 
     const fetchRoles = useCallback(async () => {
         setIsLoading(true)
         try {
-            const roles = await getRoles(searchQuery)
+            const roles = await getRoles()
             setRoles(roles)
         } catch (error) {
             toast.error("Gagal memuat data roles")
@@ -23,7 +22,7 @@ export default function useRoles() {
         } finally {
             setIsLoading(false)
         }
-    }, [searchQuery])
+    }, [])
 
     const handleAddRole = async (values) => {
         setIsLoading(true)
@@ -33,7 +32,7 @@ export default function useRoles() {
             setIsModalOpen(false)
             await fetchRoles()
         } catch (error) {
-            toast.error("Gagal menambahkan roles")
+            toast.error("Gagal menambahkan role")
             console.error("Add roles error:", error)
         } finally {
             setIsLoading(false)
@@ -50,7 +49,7 @@ export default function useRoles() {
             setIsModalOpen(false)
             await fetchRoles()
         } catch (error) {
-            toast.error("Gagal memperbarui roles")
+            toast.error("Gagal memperbarui role")
             console.error("Edit roles error:", error)
         } finally {
             setIsLoading(false)
@@ -67,7 +66,7 @@ export default function useRoles() {
             setIsDeleteAlertOpen(false)
             await fetchRoles()
         } catch (error) {
-            toast.error("Gagal menghapus roles")
+            toast.error("Gagal menghapus role")
             console.error("Delete roles error:", error)
         } finally {
             setIsLoading(false)
@@ -89,10 +88,6 @@ export default function useRoles() {
         setIsDeleteAlertOpen(true)
     }
 
-    const handleSearch = (query) => {
-        setSearchQuery(query)
-    }
-
     return {
         roles,
         isLoading,
@@ -101,7 +96,6 @@ export default function useRoles() {
         isDeleteAlertOpen,
         setIsDeleteAlertOpen,
         selectedRole,
-        searchQuery,
         fetchRoles,
         handleAddRole,
         handleEditRole,
@@ -109,6 +103,5 @@ export default function useRoles() {
         openAddModal,
         openEditModal,
         openDeleteAlert,
-        handleSearch,
     }
 }

@@ -1,14 +1,11 @@
 import apiClient from "@/lib/apiClient";
+import API from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+const ROLES_API = API.roles || `${process.env.NEXT_PUBLIC_API_BASE_URL}/roles`;
 
-export async function getRoles(searchQuery = "") {
+export async function getRoles() {
     try {
-        const url = searchQuery
-            ? `${API_URL}/resource/roles?search=${encodeURIComponent(searchQuery)}`
-            : `${API_URL}/resource/roles`
-
-        const result = await apiClient.makeRequest(url, {
+        const result = await apiClient.makeRequest(ROLES_API, {
             method: "GET",
         })
 
@@ -21,19 +18,19 @@ export async function getRoles(searchQuery = "") {
 
 export async function createRole(roleData) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/roles`, {
+        return await apiClient.makeRequest(ROLES_API, {
             method: "POST",
             body: JSON.stringify(roleData),
         });
     } catch (error) {
-        console.error("Error creating roles:", error.message)
+        console.error("Error creating role:", error.message)
         throw error
     }
 }
 
 export async function updateRole(id, roleData) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/roles/${id}`, {
+        return await apiClient.makeRequest(`${ROLES_API}/${id}`, {
             method: "PUT",
             body: JSON.stringify(roleData),
         });
@@ -45,7 +42,7 @@ export async function updateRole(id, roleData) {
 
 export async function deleteRole(id) {
     try {
-        return await apiClient.makeRequest(`${API_URL}/resource/roles/${id}`, {
+        return await apiClient.makeRequest(`${ROLES_API}/${id}`, {
             method: "DELETE",
         });
     } catch (error) {

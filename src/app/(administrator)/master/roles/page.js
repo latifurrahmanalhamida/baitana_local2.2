@@ -8,15 +8,29 @@ import { RoleForm } from "@/components/roles/RoleForm"
 import { DeleteAlert } from "@/components/roles/DeleteAlert"
 
 export default function RolePage() {
-    const rolesHook = useRoles()
+    const {
+        roles,
+        isLoading,
+        isModalOpen,
+        setIsModalOpen,
+        isDeleteAlertOpen,
+        setIsDeleteAlertOpen,
+        selectedRole,
+        fetchRoles,
+        handleAddRole,
+        handleEditRole,
+        handleDeleteRole,
+        openAddModal,
+        openEditModal,
+        openDeleteAlert
+    } = useRoles();
 
-    // Fetch roless on component mount
     useEffect(() => {
-        rolesHook.fetchRoles()
-    }, [])
+        fetchRoles()
+    }, [fetchRoles])
 
     // Create columns with action handlers
-    const columns = createColumns(rolesHook.openEditModal, rolesHook.openDeleteAlert)
+    const columns = createColumns(openEditModal, openDeleteAlert)
 
     return (
         <div className="container mx-auto space-y-6">
@@ -27,28 +41,26 @@ export default function RolePage() {
 
             <DataTable
                 columns={columns}
-                data={rolesHook.roles}
-                isLoading={rolesHook.isLoading}
-                searchQuery={rolesHook.searchQuery}
-                onSearchChange={rolesHook.handleSearch}
-                onAddNew={rolesHook.openAddModal}
+                data={roles}
+                isLoading={isLoading}
+                onAddNew={openAddModal}
             />
 
             <RoleForm
-                isModalOpen={rolesHook.isModalOpen}
-                setIsModalOpen={rolesHook.setIsModalOpen}
-                selectedRole={rolesHook.selectedRole}
-                handleAddRole={rolesHook.handleAddRole}
-                handleEditRole={rolesHook.handleEditRole}
-                isLoading={rolesHook.isLoading}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                selectedRole={selectedRole}
+                handleAddRole={handleAddRole}
+                handleEditRole={handleEditRole}
+                isLoading={isLoading}
             />
 
             <DeleteAlert
-                isDeleteAlertOpen={rolesHook.isDeleteAlertOpen}
-                setIsDeleteAlertOpen={rolesHook.setIsDeleteAlertOpen}
-                selectedRole={rolesHook.selectedRole}
-                handleDeleteRole={rolesHook.handleDeleteRole}
-                isLoading={rolesHook.isLoading}
+                isDeleteAlertOpen={isDeleteAlertOpen}
+                setIsDeleteAlertOpen={setIsDeleteAlertOpen}
+                selectedRole={selectedRole}
+                handleDeleteRole={handleDeleteRole}
+                isLoading={isLoading}
             />
         </div>
     )
