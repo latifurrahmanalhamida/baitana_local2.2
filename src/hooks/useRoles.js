@@ -69,7 +69,7 @@ export default function useRoles() {
             await fetchRoles()
         } catch (error) {
             toast.error("Gagal menghapus data role")
-            console.error("Delete roles error:", error.message)
+            console.log("Delete roles error:", error?.originalError?.message)
             throw error
         } finally {
             setIsLoading(false)

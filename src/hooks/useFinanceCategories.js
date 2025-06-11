@@ -69,7 +69,7 @@ export default function useFinanceCategories() {
             await fetchFinanceCategories()
         } catch (error) {
             toast.error("Gagal menghapus data kategori keuangan")
-            console.log("Delete finance category error:", error.message)
+            console.log("Delete finance category error:", error?.originalError?.message)
             throw error
         } finally {
             setIsLoading(false)

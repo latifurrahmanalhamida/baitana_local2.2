@@ -182,7 +182,11 @@ class ApiClient {
                     case 422:
                         throw errorData || "Data yang dikirim tidak valid";
                     case 500:
-                        throw new Error("Terjadi kesalahan pada server");
+                        throw {
+                            status_code: 500,
+                            message: "Terjadi kesalahan pada server.<br>Data tidak dapat dihapus karena mempunyai relasi pada tabel lain!",
+                            originalError: errorData
+                        };
                     default:
                         throw new Error(errorData.message || `HTTP Error: ${response.status}`);
                 }

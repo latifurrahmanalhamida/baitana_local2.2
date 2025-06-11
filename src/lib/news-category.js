@@ -35,7 +35,7 @@ export async function updateNewsCategory(id, newsCategoryData) {
             body: JSON.stringify(newsCategoryData),
         });
     } catch (error) {
-        console.error("Error updating news category:", error.message)
+        console.log("Error updating news category:", error.message)
         throw error
     }
 }
@@ -46,7 +46,7 @@ export async function deleteNewsCategory(id) {
             method: "DELETE",
         });
     } catch (error) {
-        console.error("Error deleting news category:", error.message)
+        console.log("Error deleting news category:", error.message)
         throw error
     }
 }

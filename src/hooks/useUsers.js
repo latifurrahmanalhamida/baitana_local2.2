@@ -81,7 +81,7 @@ export default function useUsers() {
             await fetchUsers();
         } catch (error) {
             toast.error("Gagal menghapus data user")
-            console.log("Delete users error:", error.message)
+            console.log("Delete users error:", error?.originalError?.message)
             throw error
         } finally {
             setIsLoading(false);

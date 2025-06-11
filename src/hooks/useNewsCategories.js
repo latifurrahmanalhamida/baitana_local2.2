@@ -69,7 +69,8 @@ export default function useNewsCategories() {
             await fetchNewsCategories()
         } catch (error) {
             toast.error("Gagal menghapus data kategori berita")
-            console.log("Delete news category error:", error)
+            console.log("Delete news category error:", error?.originalError?.message)
+            throw error
         } finally {
             setIsLoading(false)
         }

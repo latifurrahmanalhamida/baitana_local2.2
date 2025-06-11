@@ -46,7 +46,7 @@ export async function deleteRole(id) {
             method: "DELETE",
         });
     } catch (error) {
-        console.error("Error deleting role:", error.message)
+        console.log("Error deleting role:", error.message)
         throw error
     }
 }
