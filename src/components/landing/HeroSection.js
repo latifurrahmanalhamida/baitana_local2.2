@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import useSiteContent from "@/hooks/useSiteContent";
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Pagination } from "swiper/modules"
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -12,71 +13,26 @@ import "swiper/css/pagination"
 import "swiper/css/autoplay"
 
 export default function HeroSection() {
+    const { prayerTimes, isLoading, fetchPrayerTimes } = useSiteContent()
     const [mounted, setMounted] = useState(false)
-    const [prayerTimes, setPrayerTimes] = useState(null)
     const [nextPrayer, setNextPrayer] = useState(null)
     const [timeUntilNext, setTimeUntilNext] = useState("")
     const [currentDate, setCurrentDate] = useState("")
-    const [loading, setLoading] = useState(true)
+    const [expectedFormat, setExpectedFormat] = useState(3);
 
     useEffect(() => {
         setMounted(true)
         setCurrentDate(formatCurrentDate())
         fetchPrayerTimes()
-    }, [])
+    }, [fetchPrayerTimes])
 
-    useEffect(() => {
-        if (prayerTimes) {
-            const interval = setInterval(() => {
-                calculateNextPrayer();
-            }, 1000);
-            return () => clearInterval(interval);
-        }
-    }, [prayerTimes]);
-
-    const formatCurrentDate = () => {
-        const today = new Date()
-        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-        const months = [
-            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-        ]
-
-        const dayName = days[today.getDay()]
-        const day = today.getDate()
-        const month = months[today.getMonth()]
-        const year = today.getFullYear()
-
-        return `${dayName}, ${day} ${month} ${year}`
-    }
-
-    const fetchPrayerTimes = async () => {
-        try {
-            setLoading(true)
-            const today = new Date()
-            const year = today.getFullYear()
-            const month = String(today.getMonth() + 1).padStart(2, '0')
-            const day = String(today.getDate()).padStart(2, '0')
-
-            // 1634 adalah kode untuk Kota Malang
-            const response = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1634/${year}/${month}/${day}`)
-            const data = await response.json()
-
-            if (data.status && data.data) {
-                setPrayerTimes(data.data.jadwal)
-            }
-        } catch (error) {
-            console.error('Error fetching prayer times:', error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
+    // Dengan Detik
     const calculateNextPrayer = () => {
         if (!prayerTimes) return
 
         const now = new Date()
         const currentTime = now.getHours() * 60 + now.getMinutes()
+        const currentTimeInSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()
 
         const prayers = [
             { name: 'Subuh', time: prayerTimes.subuh, displayName: 'Shalat Subuh' },
@@ -112,87 +68,77 @@ export default function HeroSection() {
 
         setNextPrayer(nextPrayerData)
 
-        // Hitung waktu tersisa
-        const timeDiff = nextPrayerData.minutes - currentTime
-        const hours = Math.floor(timeDiff / 60)
-        const minutes = timeDiff % 60
+        // Hitung waktu tersisa dengan lebih akurat (detik)
+        const nextPrayerTimeInSeconds = nextPrayerData.minutes * 60
+
+        let timeDiffInSeconds = nextPrayerTimeInSeconds - currentTimeInSeconds
+
+        // Jika sholat sudah lewat hari ini, hitung untuk besok
+        if (timeDiffInSeconds <= 0 && nextPrayerData.name === 'Subuh') {
+            timeDiffInSeconds += 24 * 3600 // Tambah 24 jam dalam detik
+        }
+
+        const hours = Math.floor(timeDiffInSeconds / 3600)
+        const minutes = Math.floor((timeDiffInSeconds % 3600) / 60)
+        const seconds = timeDiffInSeconds % 60
 
         if (hours > 0) {
-            setTimeUntilNext(`${String(hours).padStart(2, '0')} jam : ${String(minutes).padStart(2, '0')} menit`)
+            setExpectedFormat(3);
+            setTimeUntilNext(`${String(hours).padStart(2, '0')} jam : ${String(minutes).padStart(2, '0')} menit : ${String(seconds).padStart(2, '0')} detik`)
+        } else if (minutes > 0) {
+            setExpectedFormat(2);
+            setTimeUntilNext(`${String(minutes).padStart(2, '0')} menit : ${String(seconds).padStart(2, '0')} detik`)
         } else {
-            setTimeUntilNext(`${String(minutes).padStart(2, '0')} menit`)
+            setExpectedFormat(1);
+            setTimeUntilNext(`${String(seconds).padStart(2, '0')} detik`)
         }
     }
 
-    // Dengan Detik
-    // const calculateNextPrayer = () => {
-    //     if (!prayerTimes) return
-    //
-    //     const now = new Date()
-    //     const currentTime = now.getHours() * 60 + now.getMinutes()
-    //     const currentTimeInSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()
-    //
-    //     const prayers = [
-    //         { name: 'Subuh', time: prayerTimes.subuh, displayName: 'Shalat Subuh' },
-    //         { name: 'Dzuhur', time: prayerTimes.dzuhur, displayName: 'Shalat Dzuhur' },
-    //         { name: 'Ashar', time: prayerTimes.ashar, displayName: 'Shalat Ashar' },
-    //         { name: 'Maghrib', time: prayerTimes.maghrib, displayName: 'Shalat Maghrib' },
-    //         { name: 'Isya', time: prayerTimes.isya, displayName: 'Shalat Isya' }
-    //     ]
-    //
-    //     // Konversi waktu sholat ke menit
-    //     const prayerMinutes = prayers.map(prayer => {
-    //         const [hours, minutes] = prayer.time.split(':').map(Number)
-    //         return {
-    //             ...prayer,
-    //             minutes: hours * 60 + minutes
-    //         }
-    //     })
-    //
-    //     // Cari sholat selanjutnya
-    //     let nextPrayerData = null
-    //     for (const prayer of prayerMinutes) {
-    //         if (prayer.minutes > currentTime) {
-    //             nextPrayerData = prayer
-    //             break
-    //         }
-    //     }
-    //
-    //     // Jika tidak ada sholat hari ini, maka sholat selanjutnya adalah Subuh besok
-    //     if (!nextPrayerData) {
-    //         nextPrayerData = prayerMinutes[0] // Subuh
-    //         nextPrayerData.minutes += 24 * 60 // Tambah 24 jam
-    //     }
-    //
-    //     setNextPrayer(nextPrayerData)
-    //
-    //     // Hitung waktu tersisa dengan lebih akurat (detik)
-    //     const nextPrayerTimeInSeconds = nextPrayerData.minutes * 60
-    //
-    //     let timeDiffInSeconds = nextPrayerTimeInSeconds - currentTimeInSeconds
-    //
-    //     // Jika sholat sudah lewat hari ini, hitung untuk besok
-    //     if (timeDiffInSeconds <= 0 && nextPrayerData.name === 'Subuh') {
-    //         timeDiffInSeconds += 24 * 3600 // Tambah 24 jam dalam detik
-    //     }
-    //
-    //     const hours = Math.floor(timeDiffInSeconds / 3600)
-    //     const minutes = Math.floor((timeDiffInSeconds % 3600) / 60)
-    //     const seconds = timeDiffInSeconds % 60
-    //
-    //     if (hours > 0) {
-    //         setTimeUntilNext(`${String(hours).padStart(2, '0')} jam : ${String(minutes).padStart(2, '0')} menit : ${String(seconds).padStart(2, '0')} detik`)
-    //     } else if (minutes > 0) {
-    //         setTimeUntilNext(`${String(minutes).padStart(2, '0')} menit : ${String(seconds).padStart(2, '0')} detik`)
-    //     } else {
-    //         setTimeUntilNext(`${String(seconds).padStart(2, '0')} detik`)
-    //     }
-    // }
+    useEffect(() => {
+        if (prayerTimes) {
+            const interval = setInterval(() => {
+                calculateNextPrayer();
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [prayerTimes]);
+
+    const formatCurrentDate = () => {
+        const today = new Date()
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ]
+
+        const dayName = days[today.getDay()]
+        const day = today.getDate()
+        const month = months[today.getMonth()]
+        const year = today.getFullYear()
+
+        return `${dayName}, ${day} ${month} ${year}`
+    }
 
     const formatTime = (time) => {
         if (!time) return '--:--'
         return `${time} WIB`
     }
+
+    const ScrambleSkeleton = ({ text = "Memuat...", interval = 50, length = 8 }) => {
+        const [scrambled, setScrambled] = useState("");
+
+        useEffect(() => {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            const scramble = () =>
+                Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+            const timer = setInterval(() => {
+                setScrambled(scramble());
+            }, interval);
+            return () => clearInterval(timer);
+        }, [interval, length]);
+
+        return <span className="font-mono text-gray-400">{scrambled}</span>;
+    };
 
     const activities = [
         {
@@ -213,7 +159,7 @@ export default function HeroSection() {
         },
     ]
 
-    if (loading) {
+    if (isLoading) {
         return (
             <main className="relative h-[440px] lg:h-[640px] w-full px-6 py-8 lg:px-[86px] lg:py-[64px]">
                 <div className="absolute inset-0 z-0">
@@ -229,8 +175,6 @@ export default function HeroSection() {
                 <div className="relative z-10 flex items-center justify-center h-full text-white">
                     <div className="text-center">
                         <LoadingSpinner />
-                        {/*<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>*/}
-                        {/*<p className="text-lg">Memuat jadwal sholat...</p>*/}
                     </div>
                 </div>
             </main>
@@ -293,10 +237,29 @@ export default function HeroSection() {
                         <div data-aos="fade-right">
                             <h2 className="lg:mb-2 text-[16px] lg:text-[24px] font-medium">Jadwal Shalat Selanjutnya</h2>
                             <h1 className="lg:mb-2 text-[18px] lg:text-4xl font-bold">
-                                {nextPrayer?.displayName || "Memuat..."}
+                                {nextPrayer?.displayName || <ScrambleSkeleton length={10} />}
                             </h1>
                             <p className="mb-2 lg:mb-0 flex items-center text-[16px] lg:text-[24px]">
-                                akan dimulai dalam <span className="mx-2 font-bold">{timeUntilNext}</span> lagi
+                                akan dimulai dalam {" "}
+                                {timeUntilNext ? (
+                                    <span className="mx-2 font-bold">{timeUntilNext}</span>
+                                ) : (
+                                    <span className="flex items-center mx-2 space-x-1">
+                                        {expectedFormat >= 3 && (
+                                            <>
+                                                <span className="w-16 h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded animate-pulse inline-block"></span>
+                                                <span className="text-gray-400 font-bold">:</span>
+                                            </>
+                                        )}
+                                        {expectedFormat >= 2 && (
+                                            <>
+                                                <span className="w-16 h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded animate-pulse inline-block"></span>
+                                                <span className="text-gray-400 font-bold">:</span>
+                                            </>
+                                        )}
+                                            <span className="w-16 h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded animate-pulse inline-block"></span>
+                                            </span>
+                                )}{" "} lagi
                             </p>
                         </div>
                         {/* Prayer Times */}
