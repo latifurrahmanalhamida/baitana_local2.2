@@ -6,17 +6,25 @@ import {DataTable} from "@/app/(administrator)/finance/recapitulations/data-tabl
 import { createColumns } from "@/app/(administrator)/finance/recapitulations/column";
 
 export default function FinanceRecapitulationsPage() {
-    const financeRecapitulationsHook = useFinanceRecapitulations();
+    const {
+        financeRecapitulations,
+        totalIncome,
+        totalExpense,
+        isLoading,
+        currentFilterDates,
+        fetchFinanceRecapitulations,
+        handleApplyDateFilter
+    } = useFinanceRecapitulations();
 
     useEffect(() => {
-        financeRecapitulationsHook.fetchFinanceRecapitulations(
-            financeRecapitulationsHook.currentFilterDates.startDate,
-            financeRecapitulationsHook.currentFilterDates.endDate
+        fetchFinanceRecapitulations(
+            currentFilterDates.startDate,
+            currentFilterDates.endDate
         )
     }, [
-        financeRecapitulationsHook.currentFilterDates.startDate,
-        financeRecapitulationsHook.currentFilterDates.endDate,
-        financeRecapitulationsHook.fetchFinanceRecapitulations
+        currentFilterDates.startDate,
+        currentFilterDates.endDate,
+        fetchFinanceRecapitulations
     ])
 
     const columns = createColumns()
@@ -30,11 +38,11 @@ export default function FinanceRecapitulationsPage() {
 
             <DataTable
                 columns={columns}
-                data={financeRecapitulationsHook.financeRecapitulations}
-                totalIncome={financeRecapitulationsHook.totalIncome}
-                totalExpense={financeRecapitulationsHook.totalExpense}
-                isLoading={financeRecapitulationsHook.isLoading}
-                onDateRangeChange={financeRecapitulationsHook.handleApplyDateFilter}
+                data={financeRecapitulations}
+                totalIncome={totalIncome}
+                totalExpense={totalExpense}
+                isLoading={isLoading}
+                onDateRangeChange={handleApplyDateFilter}
             />
         </div>
     )

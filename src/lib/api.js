@@ -8,7 +8,7 @@ const API = {
     finance_categories: `${BASE_URL}/finance/categories`,
     finance_incomes: `${BASE_URL}/finance/incomes`,
     finance_expenses: `${BASE_URL}/finance/expenses`,
-    finance_recapitulations: `${BASE_URL}/finance/expeses`,
+    finance_recapitulations: `${BASE_URL}/finance/recapitulations`,
 };
 
 export default API;

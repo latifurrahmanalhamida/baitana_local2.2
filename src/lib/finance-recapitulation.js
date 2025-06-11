@@ -1,6 +1,7 @@
 import apiClient from "@/lib/apiClient";
+import API from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+const FINANCE_RECAPITULATIONS_API = API.finance_recapitulations || `${process.env.NEXT_PUBLIC_API_BASE_URL}/finance/recapitulations`;
 
 export async function getFinanceRecapitulations(startDate = "", endDate = "") {
     try {
@@ -13,7 +14,7 @@ export async function getFinanceRecapitulations(startDate = "", endDate = "") {
             queryParams.append("end_date", endDate);
         }
 
-        let url = `${API_URL}/finance/recapitulations`;
+        let url = FINANCE_RECAPITULATIONS_API;
 
         if (queryParams.toString()) {
             url = `${url}?${queryParams.toString()}`;
