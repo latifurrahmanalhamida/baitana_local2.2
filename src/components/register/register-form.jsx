@@ -33,6 +33,7 @@ import {registerSchema} from "@/schemas/auth-schema";
 import {useAuth} from "@/context/AuthContext";
 import Image from "next/image";
 import {toast} from "sonner";
+import Link from "next/link";
 
 function toTitleCase(str) {
     if (!str) return '';
@@ -298,7 +299,7 @@ export function RegisterForm({
                                             />
                                         </div>
 
-                                        <Button type="submit" className="w-full" disabled={authLoading}>
+                                        <Button type="submit" className="w-full bg-[#2C3E9E] hover:bg-[#3f51b5]" disabled={authLoading}>
                                             {authLoading ? (
                                                 <>
                                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -314,9 +315,9 @@ export function RegisterForm({
 
                             <div className="text-center text-sm">
                                 Sudah punya akun?{" "}
-                                <a href="/auth/login" className="underline underline-offset-4">
+                                <Link href="/auth/login" className="underline underline-offset-4">
                                     Masuk
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>

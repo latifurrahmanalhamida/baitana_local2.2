@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 import Image from "next/image";
 import {
   AlertDialog, AlertDialogAction,
@@ -265,15 +266,15 @@ export function LoginForm({ className, ...props }) {
                   )}
                 </div>
 
-                <Button type="submit" className="w-full" disabled={authLoading}>
+                <Button type="submit" className="w-full bg-[#2C3E9E] hover:bg-[#3f51b5]" disabled={authLoading}>
                   {authLoading ? "Loading..." : "Login"}
                 </Button>
 
                 <div className="text-center text-sm">
                   Belum punya akun?{" "}
-                  <a href="/auth/register" className="underline underline-offset-4">
+                  <Link href="/auth/register" className="underline underline-offset-4">
                     Daftar
-                  </a>
+                  </Link>
                 </div>
               </div>
             </form>

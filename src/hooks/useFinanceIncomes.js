@@ -31,8 +31,9 @@ export default function useFinanceIncomes() {
     const fetchFinanceCategories = useCallback(async () => {
         setIsLoading(true)
         try {
-            const financeCategories = await getFinanceCategoriesByParam("type", "incomes");
+            const financeCategories = await getFinanceCategoriesByParam("type", "income");
             setFinanceCategories(financeCategories)
+            console.log(financeCategories)
         } catch (error) {
             toast.error("Gagal memuat data finance categories")
             console.error("Fetch finance categories error:", error)
