@@ -12,7 +12,7 @@ export function ReceiptPreviewModal({ isOpen, onClose, receiptPath }) {
     const fileName = receiptPath.split("/").pop();
     const fileExtension = fileName.split(".").pop()?.toLowerCase();
 
-    const fullUrl = `${receiptPath}`;
+    const fullUrl = receiptPath;
 
     return (
         <ModalForm
