@@ -40,7 +40,7 @@ export async function createFinanceCategory(financeCategoryData) {
             body: JSON.stringify(financeCategoryData),
         });
     } catch (error) {
-        console.error("Error creating finance category:", error.message)
+        console.log("Error creating finance category:", error.message)
         throw error
     }
 }
@@ -52,7 +52,7 @@ export async function updateFinanceCategory(id, financeCategoryData) {
             body: JSON.stringify(financeCategoryData),
         });
     } catch (error) {
-        console.error("Error updating finance category:", error.message)
+        console.log("Error updating finance category:", error.message)
         throw error
     }
 }
@@ -63,7 +63,7 @@ export async function deleteFinanceCategory(id) {
             method: "DELETE",
         });
     } catch (error) {
-        console.error("Error deleting finance category:", error.message)
+        console.log("Error deleting finance category:", error.message)
         throw error
     }
 }

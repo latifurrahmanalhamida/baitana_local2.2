@@ -32,8 +32,9 @@ export default function useNewsCategories() {
             setIsModalOpen(false)
             await fetchNewsCategories()
         } catch (error) {
-            toast.error("Gagal menambahkan news category")
-            console.error("Add news category error:", error)
+            toast.error("Gagal menambahkan data kategori berita")
+            console.log("Add news category error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -49,8 +50,9 @@ export default function useNewsCategories() {
             setIsModalOpen(false)
             await fetchNewsCategories()
         } catch (error) {
-            toast.error("Gagal memperbarui news category")
-            console.error("Edit news category error:", error)
+            toast.error("Gagal memperbarui data kategori berita")
+            console.log("Edit news category error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -66,8 +68,8 @@ export default function useNewsCategories() {
             setIsDeleteAlertOpen(false)
             await fetchNewsCategories()
         } catch (error) {
-            toast.error("Gagal menghapus news category")
-            console.error("Delete news category error:", error)
+            toast.error("Gagal menghapus data kategori berita")
+            console.log("Delete news category error:", error)
         } finally {
             setIsLoading(false)
         }

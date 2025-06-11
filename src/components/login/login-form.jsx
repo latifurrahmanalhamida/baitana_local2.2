@@ -113,7 +113,7 @@ export function LoginForm({ className, ...props }) {
       if (success) {
         reset();
         toast.success("Login berhasil! Selamat datang.", { duration: 2000, position: "top-right" });
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         router.push("/dashboard");
       }
     } catch (err) {
@@ -228,7 +228,7 @@ export function LoginForm({ className, ...props }) {
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" placeholder="email@example.com" {...register("email")} />
                   {errors.email && (
-                      <p className="text-xs text-red-500">{errors.email.message}</p>
+                      <p className="text-sm text-red-500">{errors.email.message}</p>
                   )}
                 </div>
 
@@ -260,6 +260,9 @@ export function LoginForm({ className, ...props }) {
                       )}
                     </button>
                   </div>
+                  {errors.password && (
+                      <p className="text-sm text-red-500">{errors.password.message}</p>
+                  )}
                 </div>
 
                 <Button type="submit" className="w-full" disabled={authLoading}>

@@ -23,7 +23,7 @@ export async function createRole(roleData) {
             body: JSON.stringify(roleData),
         });
     } catch (error) {
-        console.error("Error creating role:", error.message)
+        console.log("Error creating role:", error.message)
         throw error
     }
 }
@@ -35,7 +35,7 @@ export async function updateRole(id, roleData) {
             body: JSON.stringify(roleData),
         });
     } catch (error) {
-        console.error("Error updating roles:", error.message)
+        console.log("Error updating role:", error.message)
         throw error
     }
 }
@@ -46,7 +46,7 @@ export async function deleteRole(id) {
             method: "DELETE",
         });
     } catch (error) {
-        console.error("Error deleting roles:", error.message)
+        console.error("Error deleting role:", error.message)
         throw error
     }
 }

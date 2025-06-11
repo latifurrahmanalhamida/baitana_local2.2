@@ -44,8 +44,9 @@ export default function useUsers() {
             setIsModalOpen(false);
             await fetchUsers();
         } catch (error) {
-            toast.error("Gagal menambahkan user")
-            console.error("Add users error:", error)
+            toast.error("Gagal menambahkan data user")
+            console.log("Add users error:", error.message)
+            throw error
         } finally {
             setIsLoading(false);
         }
@@ -61,8 +62,9 @@ export default function useUsers() {
             setIsModalOpen(false);
             await fetchUsers();
         } catch (error) {
-            toast.error("Gagal memperbarui user")
-            console.error("Edit users error:", error)
+            toast.error("Gagal memperbarui data user")
+            console.log("Edit users error:", error.message)
+            throw error
         } finally {
             setIsLoading(false);
         }
@@ -78,8 +80,9 @@ export default function useUsers() {
             setIsDeleteAlertOpen(false);
             await fetchUsers();
         } catch (error) {
-            toast.error("Gagal menghapus user")
-            console.error("Delete users error:", error)
+            toast.error("Gagal menghapus data user")
+            console.log("Delete users error:", error.message)
+            throw error
         } finally {
             setIsLoading(false);
         }

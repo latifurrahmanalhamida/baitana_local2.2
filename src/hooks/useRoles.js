@@ -32,8 +32,9 @@ export default function useRoles() {
             setIsModalOpen(false)
             await fetchRoles()
         } catch (error) {
-            toast.error("Gagal menambahkan role")
-            console.error("Add roles error:", error)
+            toast.error("Gagal menambahkan data role")
+            console.log("Add news category error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -49,8 +50,9 @@ export default function useRoles() {
             setIsModalOpen(false)
             await fetchRoles()
         } catch (error) {
-            toast.error("Gagal memperbarui role")
-            console.error("Edit roles error:", error)
+            toast.error("Gagal memperbarui data role")
+            console.log("Add news category error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -66,8 +68,9 @@ export default function useRoles() {
             setIsDeleteAlertOpen(false)
             await fetchRoles()
         } catch (error) {
-            toast.error("Gagal menghapus role")
-            console.error("Delete roles error:", error)
+            toast.error("Gagal menghapus data role")
+            console.error("Delete roles error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }

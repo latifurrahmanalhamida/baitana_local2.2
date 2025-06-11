@@ -32,8 +32,9 @@ export default function useFinanceCategories() {
             setIsModalOpen(false)
             await fetchFinanceCategories()
         } catch (error) {
-            toast.error("Gagal menambahkan finance category")
-            console.error("Add finance category error:", error)
+            toast.error("Gagal menambahkan data kategori keuangan")
+            console.log("Add finance category error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -49,8 +50,9 @@ export default function useFinanceCategories() {
             setIsModalOpen(false)
             await fetchFinanceCategories()
         } catch (error) {
-            toast.error("Gagal memperbarui finance category")
-            console.error("Edit finance category error:", error)
+            toast.error("Gagal memperbarui data kategori keuangan")
+            console.log("Edit finance category error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -66,8 +68,9 @@ export default function useFinanceCategories() {
             setIsDeleteAlertOpen(false)
             await fetchFinanceCategories()
         } catch (error) {
-            toast.error("Gagal menghapus finance category")
-            console.error("Delete finance category error:", error)
+            toast.error("Gagal menghapus data kategori keuangan")
+            console.log("Delete finance category error:", error.message)
+            throw error
         } finally {
             setIsLoading(false)
         }

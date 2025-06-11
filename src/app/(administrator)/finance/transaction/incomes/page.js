@@ -2,8 +2,8 @@
 
 import useFinanceIncomes from "@/hooks/useFinanceIncomes";
 import { useEffect } from "react"
-import { DataTable } from "@/app/(administrator)/finance/transaction/income/data-table";
-import { createColumns } from "@/app/(administrator)/finance/transaction/income/column";
+import { DataTable } from "@/app/(administrator)/finance/transaction/incomes/data-table";
+import { createColumns } from "@/app/(administrator)/finance/transaction/incomes/column";
 import { FinanceIncomeForm } from "@/components/finances/incomes/FinanceIncomeForm";
 import { DeleteAlert } from "@/components/finances/incomes/DeleteAlert";
 import { ReceiptPreviewModal } from "@/components/ReceiptPreviewModal";

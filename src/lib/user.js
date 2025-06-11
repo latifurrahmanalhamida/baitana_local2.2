@@ -23,7 +23,7 @@ export async function createUser(userData) {
             body: userData,
         });
     } catch (error) {
-        console.error("Error creating user:", error.message)
+        console.log("Error creating user:", error.message)
         throw error
     }
 }
@@ -36,7 +36,7 @@ export async function updateUser(id, userData) {
             body: userData,
         });
     } catch (error) {
-        console.error("Error updating user:", error.message)
+        console.log("Error updating user:", error.message)
         throw error
     }
 }
@@ -47,7 +47,7 @@ export async function deleteUser(id) {
             method: "DELETE"
         });
     } catch (error) {
-        console.error("Error deleting user:", error.message)
+        console.log("Error deleting user:", error.message)
         throw error
     }
 }

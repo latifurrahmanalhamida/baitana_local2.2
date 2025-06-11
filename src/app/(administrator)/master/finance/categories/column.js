@@ -83,7 +83,7 @@ export const createColumns = (openEditModal, openDeleteAlert) => [
                             const typeValue = row.getValue("type");
                             const displayType = typeValue.charAt(0).toUpperCase() + typeValue.slice(1);
 
-                            const badgeClasses = typeValue === "income"
+                            const badgeClasses = typeValue === "incomes"
                                 ? "bg-green-50 text-green-700 border-green-200"
                                 : "bg-orange-50 text-orange-700 border-orange-200";
 

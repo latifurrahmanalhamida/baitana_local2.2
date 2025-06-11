@@ -44,6 +44,14 @@ export default function HeroSection() {
 
         // Konversi waktu sholat ke menit
         const prayerMinutes = prayers.map(prayer => {
+            if (!prayer.time) {
+                console.warn(`Waktu sholat untuk ${prayer.name} tidak terdefinisi.`);
+                return {
+                    ...prayer,
+                    minutes: 0
+                };
+            }
+
             const [hours, minutes] = prayer.time.split(':').map(Number)
             return {
                 ...prayer,

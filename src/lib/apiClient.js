@@ -177,8 +177,10 @@ class ApiClient {
                 switch (response.status) {
                     case 404:
                         throw new Error("Data tidak ditemukan");
+                    // case 422:
+                    //     throw new Error(errorData || "Data yang dikirim tidak valid");
                     case 422:
-                        throw new Error(errorData.message || "Data yang dikirim tidak valid");
+                        throw errorData || "Data yang dikirim tidak valid";
                     case 500:
                         throw new Error("Terjadi kesalahan pada server");
                     default:
@@ -192,9 +194,9 @@ class ApiClient {
             }
             return {};
         } catch (error) {
-            if (error.name !== 'TypeError') {
-                console.error("API request error:", error.message);
-            }
+            // if (error.name !== 'TypeError') {
+            //     console.error("API request error:", error.message);
+            // }
             throw error;
         }
     }

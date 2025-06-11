@@ -140,7 +140,7 @@ export function DataTable({ columns, data, totalIncome, totalExpense, isLoading 
                                                             ? "Kategori Keuangan"
                                                             : column.id === "description"
                                                                 ? "Deskripsi"
-                                                                : column.id === "income"
+                                                                : column.id === "incomes"
                                                                     ? "Pemasukan Keuangan"
                                                                     : column.id === "expense"
                                                                         ? "Pengeluaran Keuangan"
@@ -236,7 +236,7 @@ export function DataTable({ columns, data, totalIncome, totalExpense, isLoading 
                                         {firstTotalLabel}
                                     </TableCell>
 
-                                    {/* This TableCell is specifically for the 'income' column */}
+                                    {/* This TableCell is specifically for the 'incomes' column */}
                                     <TableCell className="h-12 font-semibold text-green-700 border-t border-gray-200 text-center rounded-xl">
                                         {sumOfIncome.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0, })}
                                     </TableCell>

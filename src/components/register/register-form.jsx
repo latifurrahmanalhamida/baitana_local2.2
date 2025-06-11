@@ -49,12 +49,11 @@ export function RegisterForm({
     const router = useRouter();
     const { register, authLoading, error } = useAuth();
 
-    // State untuk AlertDialog error global
-    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);

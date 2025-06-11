@@ -23,7 +23,7 @@ export async function createFinanceIncome(financeIncomeData) {
             body: financeIncomeData,
         });
     } catch (error) {
-        console.error("Error creating finance income:", error.message)
+        console.error("Error creating finance incomes:", error.message)
         throw error
     }
 }
@@ -36,7 +36,7 @@ export async function updateFinanceIncome(id, financeIncomeData) {
             body: financeIncomeData,
         });
     } catch (error) {
-        console.error("Error updating finance income:", error.message)
+        console.error("Error updating finance incomes:", error.message)
         throw error
     }
 }
@@ -47,7 +47,7 @@ export async function deleteFinanceIncome(id) {
             method: "DELETE",
         });
     } catch (error) {
-        console.error("Error deleting finance income:", error.message)
+        console.error("Error deleting finance incomes:", error.message)
         throw error
     }
 }

@@ -31,7 +31,7 @@ export default function useFinanceIncomes() {
     const fetchFinanceCategories = useCallback(async () => {
         setIsLoading(true)
         try {
-            const financeCategories = await getFinanceCategoriesByParam("type", "income");
+            const financeCategories = await getFinanceCategoriesByParam("type", "incomes");
             setFinanceCategories(financeCategories)
         } catch (error) {
             toast.error("Gagal memuat data finance categories")
@@ -49,8 +49,8 @@ export default function useFinanceIncomes() {
             setIsModalOpen(false)
             await fetchFinanceIncomes()
         } catch (error) {
-            toast.error("Gagal menambahkan finance income")
-            console.error("Add finance income error:", error)
+            toast.error("Gagal menambahkan finance incomes")
+            console.error("Add finance incomes error:", error)
         } finally {
             setIsLoading(false)
         }
@@ -66,8 +66,8 @@ export default function useFinanceIncomes() {
             setIsModalOpen(false)
             await fetchFinanceIncomes()
         } catch (error) {
-            toast.error("Gagal memperbarui finance income")
-            console.error("Edit finance income error:", error)
+            toast.error("Gagal memperbarui finance incomes")
+            console.error("Edit finance incomes error:", error)
         } finally {
             setIsLoading(false)
         }
@@ -83,8 +83,8 @@ export default function useFinanceIncomes() {
             setIsDeleteAlertOpen(false)
             await fetchFinanceIncomes()
         } catch (error) {
-            toast.error("Gagal menghapus finance income")
-            console.error("Delete finance income error:", error)
+            toast.error("Gagal menghapus finance incomes")
+            console.error("Delete finance incomes error:", error)
         } finally {
             setIsLoading(false)
         }

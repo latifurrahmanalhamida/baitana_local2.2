@@ -23,7 +23,7 @@ export async function createNewsCategory(newsCategoryData) {
             body: JSON.stringify(newsCategoryData),
         });
     } catch (error) {
-        console.error("Error creating news category:", error.message)
+        console.log("Error creating news category:", error.message)
         throw error
     }
 }

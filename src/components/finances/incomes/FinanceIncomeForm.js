@@ -208,7 +208,7 @@ export function FinanceIncomeForm({
     const renderTransactionReceiptPreview = () => {
         const fileToPreview = selectedFile || selectedFinanceIncome;
 
-        const currentPreviewUrl = selectedFile ? previewUrl : (selectedFinanceIncome?.transaction_receipt ? `${BASE_URL}${selectedFinanceIncome.transaction_receipt}` : null);
+        const currentPreviewUrl = selectedFile ? previewUrl : (selectedFinanceIncome?.transaction_receipt ? selectedFinanceIncome.transaction_receipt : null);
 
         if (!fileToPreview || !currentPreviewUrl) {
             return null;
