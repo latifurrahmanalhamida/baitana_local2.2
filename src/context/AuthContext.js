@@ -6,7 +6,7 @@ import apiClient from '@/lib/apiClient';
 import { toast } from "sonner"
 
 const AuthContext = createContext();
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
