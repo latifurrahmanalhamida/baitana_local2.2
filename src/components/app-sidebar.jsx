@@ -1,166 +1,128 @@
 "use client"
 
-import * as React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd, LayoutDashboardIcon,
-  Map,
-  PieChart,
-  Settings2,
+  LayoutDashboardIcon,
   SquareTerminal,
-} from "lucide-react"
+  BookOpen,
+  Settings2,
+  PieChart
+} from "lucide-react";
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarHeader, SidebarMenu, SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
 import {useAuth} from "@/context/AuthContext";
+import Image from "next/image";
 
-// This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
+  navGroups: [ // Mengubah nama dari navMain menjadi navGroups untuk kejelasan
     {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
+      label: "Dashboard", // Label untuk SidebarGroupLabel
       items: [
         {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Dashboard",
+          url: "/dashboard",
+          icon: LayoutDashboardIcon,
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
+      label: "Master Data", // Label untuk SidebarGroupLabel
       items: [
         {
-          title: "Genesis",
+          title: "Master Data", // Ini adalah menu utama 'Master Data' yang bisa di-expand
           url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          icon: SquareTerminal,
+          isActive: true,
+          // Menggunakan 'subItems' untuk kejelasan
+          subItems: [
+            {
+              title: "Fasilitas",
+              url: "/master/facilities", // Mengganti URL ke /master/facilities
+            },
+            {
+              title: "Kategori Berita",
+              url: "/master/news/categories",
+            },
+            {
+              title: "Kategori Keuangan",
+              url: "/master/finance/categories",
+            },
+            {
+              title: "Role",
+              url: "/master/roles",
+            },
+            {
+              title: "User",
+              url: "/master/users",
+            },
+          ],
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      label: "Transaksi Keuangan", // Label untuk SidebarGroupLabel
       items: [
         {
-          title: "Introduction",
+          title: "Transaksi Keuangan", // Ini adalah menu utama 'Transaksi Keuangan' yang bisa di-expand
           url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          icon: SquareTerminal,
+          subItems: [ // Menggunakan 'subItems'
+            {
+              title: "Keuangan Masuk",
+              url: "/finance/transaction/incomes",
+            },
+            {
+              title: "Keuangan Keluar",
+              url: "/finance/transaction/expenses",
+            },
+            {
+              title: "Rekapitulasi Keuangan",
+              url: "/finance/recapitulations",
+            },
+          ],
         },
       ],
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
+      label: "Jadwal dan Acara", // Label untuk SidebarGroupLabel
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "Jadwal dan Acara",
+          url: "/events/schedule", // Mengganti URL ke /events/schedule
+          icon: BookOpen,
         },
+      ],
+    },
+    {
+      label: "Berita", // Label untuk SidebarGroupLabel
+      items: [
         {
-          title: "Team",
-          url: "#",
+          title: "Berita",
+          url: "/news", // Mengganti URL ke /news
+          icon: Settings2,
         },
+      ],
+    },
+    {
+      label: "Laporan", // Menambahkan grup untuk 'Laporan'
+      items: [
         {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Laporan",
+          url: "/reports", // Contoh URL untuk halaman laporan
+          icon: PieChart, // Contoh ikon untuk laporan
         },
       ],
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
 
 export function AppSidebar({
@@ -169,38 +131,58 @@ export function AppSidebar({
   const { user, authLoading } = useAuth();
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <Sidebar
+          collapsible="icon"
+          {...props}
+          className="bg-gradient-to-b from-[#2C3E9E] via-[#2C3E9E] to-[#1e2b6b] shadow-xl"
+      >
+        <SidebarHeader className="bg-gradient-to-r from-[#2C3E9E] to-[#3d4fb8] border-b border-blue-200/20">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Documentation</span>
-                  <span className="">v1.0.0</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
+            <div className="flex justify-center items-center rounded-xl p-2 bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
+              <img
+                  src="/images/logo-baitana-temp-white.png"
+                  alt="Logo Baitana"
+                  width={80}
+                  height={80}
+                  className="w-40 md:w-48 h-auto drop-shadow-sm"
+              />
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+      <SidebarContent className="gap-0 bg-gradient-to-b from-[#2C3E9E] via-[#2C3E9E] to-[#1e2b6b] scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent p-0">
+        <NavMain data={data}/>
       </SidebarContent>
-      <SidebarFooter>
-        {!authLoading && user ? (
-            <NavUser user={user} />
-        ) : (
-            <div className="h-16 flex items-center justify-center text-muted-foreground">
-              Loading user...
-            </div>
-        )}
-      </SidebarFooter>
-      <SidebarRail />
+      {/*<SidebarContent>*/}
+      {/*  <NavMain data={data}/>*/}
+      {/*  /!*<NavProjects projects={data.projects} />*!/*/}
+      {/*</SidebarContent>*/}
+        <SidebarFooter className="bg-gradient-to-r from-[#1e2b6b] to-[#2C3E9E] border-t border-blue-200/20">
+          {!authLoading && user ? (
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 shadow-md">
+                <NavUser user={user}/>
+              </div>
+          ) : (
+              <div className="h-16 flex items-center justify-center text-white/70 bg-white/5 rounded-lg border border-white/10">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span className="text-sm font-medium">Loading user...</span>
+                </div>
+              </div>
+          )}
+        </SidebarFooter>
+      {/*<SidebarFooter>*/}
+      {/*  {!authLoading && user ? (*/}
+      {/*      <NavUser user={user}/>*/}
+      {/*  ) : (*/}
+      {/*      <div className="h-16 flex items-center justify-center text-muted-foreground">*/}
+      {/*        Loading user...*/}
+      {/*      </div>*/}
+      {/*  )}*/}
+      {/*</SidebarFooter>*/}
+      {/*<SidebarRail />*/}
+        <SidebarRail className="bg-blue-300/20" />
     </Sidebar>
   );
 }

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-export function middleware(request) {
-    const cookieStore = cookies();
+export async function middleware(request) {
+    const cookieStore = await cookies();
     const token = cookieStore.get('access_token')?.value;
 
     const isLoginRoute = request.nextUrl.pathname === '/auth/login';
