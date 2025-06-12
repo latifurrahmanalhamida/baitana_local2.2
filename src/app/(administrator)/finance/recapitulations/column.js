@@ -61,10 +61,10 @@ export const createColumns = () => [
         size: 300,
     },
     {
-        accessorKey: "incomes",
+        accessorKey: "income",
         header: () => <div className="px-2 font-semibold text-center">Pemasukan Keuangan</div>,
         cell: ({ row }) => {
-            return <div className="font-medium text-gray-900 text-center">{row.getValue("incomes")}</div>
+            return <div className="font-medium text-gray-900 text-center">{row.getValue("income")}</div>
         },
         size: 150,
     },
