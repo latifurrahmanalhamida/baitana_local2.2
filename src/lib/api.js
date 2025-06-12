@@ -5,6 +5,7 @@ const API = {
     users: `${BASE_URL}/users`,
     news_categories: `${BASE_URL}/news-categories`,
     news: `${BASE_URL}/news`,
+    facilities: `${BASE_URL}/facilities`,
     finance_categories: `${BASE_URL}/finance/categories`,
     finance_incomes: `${BASE_URL}/finance/incomes`,
     finance_expenses: `${BASE_URL}/finance/expenses`,

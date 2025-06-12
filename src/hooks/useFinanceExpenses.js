@@ -13,7 +13,7 @@ export default function useFinanceExpenses() {
     const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false)
     const [isPreviewReceiptModalOpen, setIsPreviewReceiptModalOpen] = useState(false);
     const [receiptToPreview, setReceiptToPreview] = useState(null);
-    const [selectedFinanceExpense, setselectedFinanceExpense] = useState(null)
+    const [selectedFinanceExpense, setSelectedFinanceExpense] = useState(null)
 
     const fetchFinanceExpenses = useCallback(async () => {
         setIsLoading(true)
@@ -91,17 +91,17 @@ export default function useFinanceExpenses() {
     }
 
     const openAddModal = () => {
-        setselectedFinanceExpense(null)
+        setSelectedFinanceExpense(null)
         setIsModalOpen(true)
     }
 
     const openEditModal = (FinanceExpense) => {
-        setselectedFinanceExpense(FinanceExpense)
+        setSelectedFinanceExpense(FinanceExpense)
         setIsModalOpen(true)
     }
 
     const openDeleteAlert = (FinanceExpense) => {
-        setselectedFinanceExpense(FinanceExpense)
+        setSelectedFinanceExpense(FinanceExpense)
         setIsDeleteAlertOpen(true)
     }
 
